@@ -11,8 +11,10 @@
  * Performance: Leverages LibSQL 'contains' for performant path-based searching.
  */
 import { Controller, Get, Query } from '@nestjs/common';
-import { TaxonomyService } from './taxonomy.service';
+
 import { ApiResponse } from '@common/responses/api-response';
+
+import { TaxonomyService } from './taxonomy.service';
 
 @Controller('taxonomy')
 export class TaxonomyController {

@@ -10,6 +10,7 @@
  *   - Export: Shared globally to ensure a single DB connection instance.
  */
 import { Global, Module } from '@nestjs/common';
+
 import { PrismaService } from './prisma.service';
 
 @Global()

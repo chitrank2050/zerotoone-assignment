@@ -12,9 +12,11 @@
  * Auth: Placeholder 'admin-user-id' used. In production, this maps to JWT sub.
  * Flow: Controller -> ChatService -> Gemini 1.5 Flash -> LibSQL (Prisma)
  */
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
-import { ChatService } from './chat.service';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+
 import { ApiResponse } from '@common/responses/api-response';
+
+import { ChatService } from './chat.service';
 
 @Controller('chat')
 export class ChatController {

@@ -14,22 +14,26 @@
  */
 import {
   Injectable,
-  Logger,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
-import {
-  GoogleGenerativeAI,
-  GenerativeModel,
-  Content,
-} from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
+
+import {
+  Content,
+  GenerativeModel,
+  GoogleGenerativeAI,
+} from '@google/generative-ai';
+
 import { PrismaService } from '@modules/prisma/prisma.service';
-import { TaxonomyService } from '../taxonomy/taxonomy.service';
+
 import type {
   LocationTaxonomy,
-  TransactionTaxonomy,
   Message,
+  TransactionTaxonomy,
 } from '@prisma/client';
+
+import { TaxonomyService } from '../taxonomy/taxonomy.service';
 
 @Injectable()
 export class ChatService {

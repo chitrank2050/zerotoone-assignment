@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: apps/backend/Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - apps/backend/.env
     volumes:
@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: apps/frontend/Dockerfile
     ports:
-      - "80:80"
+      - '80:80'
     depends_on:
       - backend
     restart: always

@@ -1,11 +1,11 @@
 // @ts-check
-import js from "@eslint/js";
-import tseslint from "typescript-eslint";
-import eslintConfigPrettier from "eslint-config-prettier";
+import js from '@eslint/js';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ["dist/**", "node_modules/**", "eslint.config.mjs"],
+    ignores: ['dist/**', 'node_modules/**', 'eslint.config.mjs'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -18,7 +18,10 @@ export default tseslint.config(
       },
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
     },
   },
   eslintConfigPrettier,

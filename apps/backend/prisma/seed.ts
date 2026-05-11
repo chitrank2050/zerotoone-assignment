@@ -1,8 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import 'dotenv/config';
 import * as fs from 'fs';
 import * as path from 'path';
-import 'dotenv/config';
+
+import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaClient } from '@prisma/client';
 
 const adapter = new PrismaLibSql({
   url: process.env.DATABASE_URL as string,
