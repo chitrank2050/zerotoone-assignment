@@ -129,7 +129,10 @@ export class ChatService {
       const result = await chat.sendMessage(text);
       responseText = result.response.text();
     } catch (error) {
-      this.logger.error(`Gemini API Error: ${error.message}`, error.stack);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Gemini API Error: ${errorMessage}`, errorStack);
       throw new InternalServerErrorException(
         'Failed to communicate with AI service',
       );

@@ -118,4 +118,5 @@ audience-builder/
 
 ---
 
-❤️ Developed by [Antigravity](https://github.com/google-deepmind) 🧠📊🚀
+Developed by [Chitrank Agnihotri](https://www.chitrankagnihotri.com)
+As part of a Engineering Assessment.
