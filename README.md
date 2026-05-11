@@ -27,7 +27,6 @@ The **AI Audience Builder** is a high-rigor, spec-driven monorepo designed for m
 
 ---
 
-
 ## 🤝 Shared Contract Governance
 
 This monorepo uses an in-house "Ground Truth" package: **`@audience-builder/shared`**.
@@ -55,6 +54,20 @@ Built for production-grade troubleshooting:
 - **Performance Logging**: Real-time request monitoring with millisecond-precision timing and status-code color coding.
 
 ---
+
+## ⚙️ Environment Prerequisites
+
+Before starting the system, ensure you have a `.env` file in `apps/backend/` with the following configuration:
+
+| Variable         | Description                | Example                    |
+| :--------------- | :------------------------- | :------------------------- |
+| `DATABASE_URL`   | Path to LibSQL database    | `file:./prisma/dev.db`     |
+| `JWT_SECRET`     | Secret key for auth tokens | `your-high-entropy-secret` |
+| `GEMINI_API_KEY` | Google AI API Key          | `AIzaSy...`                |
+| `PORT`           | Backend service port       | `3000`                     |
+
+---
+
 ## 🚀 Engineering Workflows
 
 This monorepo supports two distinct execution modes. Choose the one that fits your current task.
@@ -65,7 +78,7 @@ Best for active coding with Instant HMR and native debugging. Since we use **Lib
 
 ```bash
 # 1. One-click bootstrap (Install + Generate + Migrate)
-pnpm setup
+pnpm run setup
 
 # 2. Start all services in parallel watch mode
 pnpm dev
@@ -91,7 +104,7 @@ pnpm docker:logs
 
 | Command            | Scope | Description                                            |
 | :----------------- | :---- | :----------------------------------------------------- |
-| `pnpm setup`       | Root  | **One-click bootstrap**: Install + Generate + Deploy   |
+| `pnpm run setup`   | Root  | **One-click bootstrap**: Install + Generate + Deploy   |
 | `pnpm dev`         | Root  | Starts all apps in parallel watch mode                 |
 | `pnpm build`       | Root  | Performs a full build of all packages                  |
 | `pnpm check-types` | Root  | Runs strict TypeScript validation across the workspace |
