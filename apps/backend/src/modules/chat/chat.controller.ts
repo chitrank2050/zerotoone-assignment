@@ -14,7 +14,7 @@
  */
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { ApiResponse } from '../common/responses/api-response';
+import { ApiResponse } from '@common/responses/api-response';
 
 @Controller('chat')
 export class ChatController {

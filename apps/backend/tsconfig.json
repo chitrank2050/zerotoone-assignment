@@ -7,7 +7,7 @@
     "paths": {
       "@common/*": ["src/common/*"],
       "@modules/*": ["src/modules/*"],
-      "@prisma/*": ["src/modules/prisma/*"],
+      "@prisma/*": ["prisma/*"],
       "@data/*": ["data/*"]
     },
     "types": ["node", "jest"],
