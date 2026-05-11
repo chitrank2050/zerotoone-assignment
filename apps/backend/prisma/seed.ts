@@ -42,7 +42,7 @@ async function main() {
   // 2. Load Location Taxonomy
   const locationData = JSON.parse(
     fs.readFileSync(
-      path.join(__dirname, '../../../data/location_taxonomy.json'),
+      path.join(__dirname, '../data/location_taxonomy.json'),
       'utf8',
     ),
   ) as TaxonomyItem[];
@@ -62,7 +62,7 @@ async function main() {
   // 3. Load Transaction Taxonomy
   const transactionData = JSON.parse(
     fs.readFileSync(
-      path.join(__dirname, '../../../data/transaction_taxonomy.json'),
+      path.join(__dirname, '../data/transaction_taxonomy.json'),
       'utf8',
     ),
   ) as TaxonomyItem[];

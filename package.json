@@ -15,6 +15,7 @@
     "docker:logs": "docker compose logs -f"
   },
   "devDependencies": {
+    "@chitrank2050/git-hygiene": "^0.4.12",
     "@eslint/js": "^10.0.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "eslint": "^10.3.0",
@@ -26,5 +27,25 @@
     "turbo": "latest",
     "typescript-eslint": "^8.59.2"
   },
-  "packageManager": "pnpm@10.33.2"
+  "packageManager": "pnpm@10.33.2",
+  "git-hygiene": {
+    "types": [
+      "feat",
+      "fix",
+      "chore",
+      "docs",
+      "style",
+      "refactor",
+      "perf",
+      "test",
+      "build",
+      "ci",
+      "revert"
+    ],
+    "ignoreBranches": [
+      "main",
+      "master",
+      "gh-pages"
+    ]
+  }
 }
