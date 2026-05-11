@@ -19,9 +19,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:generate": "prisma generate --schema=prisma/schema.prisma",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy --schema=prisma/schema.prisma && pnpm db:seed",
+    "db:generate": "pnpm prisma generate --schema=prisma/schema.prisma",
+    "db:migrate": "pnpm prisma migrate dev",
+    "db:deploy": "pnpm prisma migrate deploy --schema=prisma/schema.prisma && pnpm db:seed",
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
@@ -42,6 +42,7 @@
     "libsql": "^0.5.29",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "prisma": "^7.8.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -63,7 +64,6 @@
     "globals": "^17.0.0",
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
-    "prisma": "^7.8.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",

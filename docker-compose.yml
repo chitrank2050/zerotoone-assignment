@@ -1,5 +1,6 @@
 services:
   backend:
+    container_name: audience-builder-backend
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
@@ -12,6 +13,7 @@ services:
     restart: always
 
   frontend:
+    container_name: audience-builder-frontend
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
