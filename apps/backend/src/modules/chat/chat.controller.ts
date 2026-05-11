@@ -12,61 +12,108 @@
  * Auth: Placeholder 'admin-user-id' used. In production, this maps to JWT sub.
  * Flow: Controller -> ChatService -> Gemini 1.5 Flash -> LibSQL (Prisma)
  */
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { ApiResponse } from '@common/responses/api-response';
+import { ErrorResponseDto } from '@common/dto/error-response.dto';
+import { ApiResponse as AppResponse } from '@common/responses/api-response';
 
 import { ChatService } from './chat.service';
+import {
+  ConversationResponseDto,
+  MessageResponseDto,
+} from './dto/chat-response.dto';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { SendMessageDto } from './dto/send-message.dto';
 
+@ApiTags('Chat')
 @Controller('chat')
 export class ChatController {
   constructor(private chatService: ChatService) {}
 
   /**
    * Initializes a new Audience Building session.
-   * Persistence: Creates a new entry in the 'Conversation' table.
    */
   @Post('conversations')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Initialize a new audience build session' })
+  @ApiResponse({
+    status: 201,
+    description: 'Conversation created successfully',
+    type: ConversationResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Not authenticated',
+    type: ErrorResponseDto,
+  })
   async createConversation(@Body() dto: CreateConversationDto) {
     const userId = 'admin-user-id';
     const result = await this.chatService.createConversation(
       userId,
       dto.title || 'New Build',
     );
-    return ApiResponse.ok(result);
+    return AppResponse.ok(result);
   }
 
   /**
    * Retrieves the current user's session history.
-   * Usage: Populates the 'Recent Builds' navigation sidebar.
    */
   @Get('conversations')
+  @ApiOperation({ summary: 'List all historical build sessions' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of sessions retrieved',
+    type: [ConversationResponseDto],
+  })
   async getConversations() {
     const userId = 'admin-user-id';
     const result = await this.chatService.getConversations(userId);
-    return ApiResponse.ok(result);
+    return AppResponse.ok(result);
   }
 
   /**
-   * Ingests a natural language audience description and returns AI-mapped signals.
-   * Core Loop: Injects latest taxonomies into Gemini prompt context for grounded results.
+   * Ingests natural language and returns AI-mapped signals.
    */
   @Post('conversations/:id/messages')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Send audience description to AI engine' })
+  @ApiResponse({
+    status: 201,
+    description: 'Message processed and AI response generated',
+    type: MessageResponseDto,
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Gemini API failure or internal error',
+    type: ErrorResponseDto,
+  })
   async sendMessage(@Param('id') id: string, @Body() dto: SendMessageDto) {
     const userId = 'admin-user-id';
     const result = await this.chatService.sendMessage(userId, id, dto.text);
-    return ApiResponse.ok(result);
+    return AppResponse.ok(result);
   }
 
   /**
    * Hydrates the message thread for a selected session.
-   * Performance: Ordered by createdAt ascending for immediate chat consistency.
    */
   @Get('conversations/:id/messages')
+  @ApiOperation({ summary: 'Retrieve full chat history for a session' })
+  @ApiResponse({
+    status: 200,
+    description: 'Chat messages retrieved',
+    type: [MessageResponseDto],
+  })
   async getMessages(@Param('id') id: string) {
     const result = await this.chatService.getMessages(id);
-    return ApiResponse.ok(result);
+    return AppResponse.ok(result);
   }
 }
