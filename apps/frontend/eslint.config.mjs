@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 
 /**
  * Frontend ESLint Configuration
- * 
+ *
  * This configuration is anchored to the frontend workspace root to resolve
  * monorepo ambiguity. It uses the TypeScript-ESLint Project Service for
  * high-performance type-safe linting.
@@ -14,7 +14,7 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   // 1. Global Ignores
   { ignores: ['dist', 'eslint.config.mjs', 'eslint.config.js', 'vite.config.ts'] },
-  
+
   // 2. Base Configuration
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
