@@ -14,6 +14,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 
 import { ApiResponse } from '@common/responses/api-response';
 
+import { SearchTaxonomyDto } from './dto/search-taxonomy.dto';
 import { TaxonomyService } from './taxonomy.service';
 
 @Controller('taxonomy')
@@ -25,9 +26,9 @@ export class TaxonomyController {
    * Supports optional fuzzy search via the 'q' query parameter.
    */
   @Get('locations')
-  async getLocations(@Query('q') query?: string) {
-    const result = query
-      ? await this.taxonomyService.searchLocations(query)
+  async getLocations(@Query() dto: SearchTaxonomyDto) {
+    const result = dto.q
+      ? await this.taxonomyService.searchLocations(dto.q)
       : await this.taxonomyService.getAllLocations();
     return ApiResponse.ok(result);
   }
@@ -37,9 +38,9 @@ export class TaxonomyController {
    * Matches against categorical names and hierarchical paths.
    */
   @Get('transactions')
-  async getTransactions(@Query('q') query?: string) {
-    const result = query
-      ? await this.taxonomyService.searchTransactions(query)
+  async getTransactions(@Query() dto: SearchTaxonomyDto) {
+    const result = dto.q
+      ? await this.taxonomyService.searchTransactions(dto.q)
       : await this.taxonomyService.getAllTransactions();
     return ApiResponse.ok(result);
   }

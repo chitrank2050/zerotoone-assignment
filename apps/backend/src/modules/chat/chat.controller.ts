@@ -17,6 +17,8 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiResponse } from '@common/responses/api-response';
 
 import { ChatService } from './chat.service';
+import { CreateConversationDto } from './dto/create-conversation.dto';
+import { SendMessageDto } from './dto/send-message.dto';
 
 @Controller('chat')
 export class ChatController {
@@ -27,11 +29,11 @@ export class ChatController {
    * Persistence: Creates a new entry in the 'Conversation' table.
    */
   @Post('conversations')
-  async createConversation(@Body('title') title: string) {
+  async createConversation(@Body() dto: CreateConversationDto) {
     const userId = 'admin-user-id';
     const result = await this.chatService.createConversation(
       userId,
-      title || 'New Build',
+      dto.title || 'New Build',
     );
     return ApiResponse.ok(result);
   }
@@ -52,9 +54,9 @@ export class ChatController {
    * Core Loop: Injects latest taxonomies into Gemini prompt context for grounded results.
    */
   @Post('conversations/:id/messages')
-  async sendMessage(@Param('id') id: string, @Body('text') text: string) {
+  async sendMessage(@Param('id') id: string, @Body() dto: SendMessageDto) {
     const userId = 'admin-user-id';
-    const result = await this.chatService.sendMessage(userId, id, text);
+    const result = await this.chatService.sendMessage(userId, id, dto.text);
     return ApiResponse.ok(result);
   }
 
