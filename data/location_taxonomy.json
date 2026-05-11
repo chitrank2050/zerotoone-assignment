@@ -1,0 +1,22 @@
+[
+  {
+    "id": "loc_1",
+    "path": "Retail > Apparel > Fashion Boutique",
+    "name": "Fashion Boutique"
+  },
+  {
+    "id": "loc_2",
+    "path": "Fitness > Gym > Yoga Studio",
+    "name": "Yoga Studio"
+  },
+  {
+    "id": "loc_3",
+    "path": "Dining > Coffee Shop",
+    "name": "Coffee Shop"
+  },
+  {
+    "id": "loc_4",
+    "path": "Travel > Airport > International",
+    "name": "International Airport"
+  }
+]

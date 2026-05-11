@@ -1,0 +1,22 @@
+[
+  {
+    "id": "txn_1",
+    "path": "Electronics > Computers > Laptops > Premium",
+    "name": "Premium Laptops"
+  },
+  {
+    "id": "txn_2",
+    "path": "Lifestyle > Sports > Footwear > Running",
+    "name": "Running Shoes"
+  },
+  {
+    "id": "txn_3",
+    "path": "Groceries > Organic > Health Food",
+    "name": "Health Food"
+  },
+  {
+    "id": "txn_4",
+    "path": "Luxury > Watches > Analog",
+    "name": "Luxury Watches"
+  }
+]
