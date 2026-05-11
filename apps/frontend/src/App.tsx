@@ -27,7 +27,7 @@ import {
   Users,
 } from 'lucide-react';
 
-import { Conversation, Message } from '@audience-builder/shared';
+import type { Conversation, Message } from '@audience-builder/shared';
 
 import './App.css';
 

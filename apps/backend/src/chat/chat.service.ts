@@ -21,7 +21,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
-import { LocationTaxonomy, TransactionTaxonomy, Message } from '@prisma/client';
+import type {
+  LocationTaxonomy,
+  TransactionTaxonomy,
+  Message,
+} from '@prisma/client';
 
 @Injectable()
 export class ChatService {
