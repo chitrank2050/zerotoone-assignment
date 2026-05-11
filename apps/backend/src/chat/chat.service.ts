@@ -12,7 +12,11 @@
  *
  * Performance: Optimized for low-latency AI responses via Gemini 1.5 Flash.
  */
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import {
   GoogleGenerativeAI,
   GenerativeModel,
@@ -29,6 +33,7 @@ import type {
 
 @Injectable()
 export class ChatService {
+  private readonly logger = new Logger(ChatService.name);
   private genAI: GoogleGenerativeAI;
   private model: GenerativeModel;
 
@@ -118,8 +123,17 @@ export class ChatService {
     }
 
     const chat = this.model.startChat({ history: chatHistory });
-    const result = await chat.sendMessage(text);
-    const responseText = result.response.text();
+
+    let responseText: string;
+    try {
+      const result = await chat.sendMessage(text);
+      responseText = result.response.text();
+    } catch (error) {
+      this.logger.error(`Gemini API Error: ${error.message}`, error.stack);
+      throw new InternalServerErrorException(
+        'Failed to communicate with AI service',
+      );
+    }
 
     await this.prisma.message.create({
       data: { conversationId, role: 'agent', content: responseText },

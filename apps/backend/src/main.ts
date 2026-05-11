@@ -1,5 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
+import compression from 'compression';
 import { AppModule } from './app.module';
 
 /**
@@ -12,9 +14,24 @@ async function bootstrap() {
   // 1. Initialize NestJS Application with the root AppModule
   const app = await NestFactory.create(AppModule);
 
-  // 2. Global Security: Enable CORS for Frontend communication
-  // In production, this should be restricted to specific origins
-  app.enableCors();
+  // 2. Global Security & Performance Middleware
+  app.use(helmet());
+  app.use(compression());
+
+  // 3. Global Security: Enable CORS for Frontend communication
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') ?? [
+    'http://localhost:3000',
+    'http://localhost:5173',
+  ];
+
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
+
+  // Enable Graceful Shutdown hooks
+  app.enableShutdownHooks();
 
   /**
    * 3. Principal-Grade Data Integrity
