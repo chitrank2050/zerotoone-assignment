@@ -83,3 +83,35 @@ export interface ApiResponse<T> {
   error?: string;
   timestamp: string;
 }
+
+/**
+ * --- Request DTOs ---
+ * Defined here for cross-workspace reuse.
+ */
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface SendMessageRequest {
+  content: string;
+}
+
+/**
+ * --- Error Keys ---
+ * Shared keys for consistent error handling.
+ */
+export const ErrorKeys = {
+  AUTH: {
+    USER_NOT_FOUND: 'AUTH_USER_NOT_FOUND',
+    INVALID_CREDENTIALS: 'AUTH_INVALID_CREDENTIALS',
+  },
+  CHAT: {
+    CONVERSATION_NOT_FOUND: 'CHAT_CONVERSATION_NOT_FOUND',
+    UNAUTHORIZED_ACCESS: 'CHAT_UNAUTHORIZED_ACCESS',
+  },
+  TAXONOMY: {
+    INVALID_QUERY: 'TAXONOMY_INVALID_QUERY',
+  },
+} as const;

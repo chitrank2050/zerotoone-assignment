@@ -96,9 +96,7 @@ export class ChatService {
     });
 
     if (!conversation) {
-      throw new NotFoundException(
-        ERRORS.CHAT.CONVERSATION_NOT_FOUND(conversationId),
-      );
+      throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
     }
 
     return this.prisma.message.findMany({
@@ -117,9 +115,7 @@ export class ChatService {
       });
     } catch (error) {
       if (isForeignKeyError(error)) {
-        throw new NotFoundException(
-          ERRORS.CHAT.CONVERSATION_NOT_FOUND(conversationId),
-        );
+        throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
       }
       throw error;
     }
@@ -189,9 +185,7 @@ export class ChatService {
       });
     } catch (error) {
       if (isNotFoundError(error)) {
-        throw new NotFoundException(
-          ERRORS.CHAT.CONVERSATION_NOT_FOUND(conversationId),
-        );
+        throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
       }
       throw error;
     }

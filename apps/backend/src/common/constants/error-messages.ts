@@ -1,3 +1,5 @@
+import { ErrorKeys } from '@audience-builder/shared';
+
 /**
  * Centralized error messages used across the application.
  *
@@ -11,23 +13,21 @@ export const ERRORS = {
    * Authentication related error messages
    */
   AUTH: {
-    USER_NOT_FOUND: 'User not found',
-    INVALID_CREDENTIALS: 'Invalid email or password',
+    USER_NOT_FOUND: ErrorKeys.AUTH.USER_NOT_FOUND,
+    INVALID_CREDENTIALS: ErrorKeys.AUTH.INVALID_CREDENTIALS,
   },
   /**
    * Chat/Conversation related error messages
    */
   CHAT: {
-    CONVERSATION_NOT_FOUND: (id: string) =>
-      `Conversation with ID "${id}" not found`,
-    UNAUTHORIZED_ACCESS:
-      'You do not have permission to access this conversation',
+    CONVERSATION_NOT_FOUND: ErrorKeys.CHAT.CONVERSATION_NOT_FOUND,
+    UNAUTHORIZED_ACCESS: ErrorKeys.CHAT.UNAUTHORIZED_ACCESS,
   },
   /**
    * Taxonomy related error messages
    */
   TAXONOMY: {
-    INVALID_QUERY: 'Search query cannot be empty',
+    INVALID_QUERY: ErrorKeys.TAXONOMY.INVALID_QUERY,
   },
   /**
    * Generic database error messages
