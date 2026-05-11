@@ -1,60 +1,40 @@
 @import 'tailwindcss';
 
 @theme {
-  /* --- 🎨 Core Brand Palette (OKLCH) --- */
-  --color-brand-primary: oklch(0.65 0.24 250);
-  --color-brand-secondary: oklch(0.7 0.2 300);
-  
-  /* --- 🌚 Neutral Scale (Minimalist Dark) --- */
+  /* --- 🌑 Pure Monochromatic Scale --- */
+  --color-brand-primary: oklch(0.95 0 0); /* White/Off-white for focus */
+
   --color-neutral-50: oklch(0.98 0 0);
   --color-neutral-100: oklch(0.95 0 0);
-  --color-neutral-200: oklch(0.9 0 0);
-  --color-neutral-300: oklch(0.8 0 0);
-  --color-neutral-400: oklch(0.6 0 0);
-  --color-neutral-500: oklch(0.4 0 0);
-  --color-neutral-600: oklch(0.25 0 0);
-  --color-neutral-700: oklch(0.18 0 0);
-  --color-neutral-800: oklch(0.12 0 0);
-  --color-neutral-900: oklch(0.08 0 0);
-  --color-neutral-950: oklch(0.05 0 0);
+  --color-neutral-400: oklch(0.5 0 0);
+  --color-neutral-600: oklch(0.2 0 0);
+  --color-neutral-800: oklch(0.1 0 0);
+  --color-neutral-900: oklch(0.05 0 0);
+  --color-neutral-950: oklch(0.02 0 0);
 
-  /* --- ✨ Semantic Surface & Border --- */
-  --color-surface-base: var(--color-neutral-950);
-  --color-surface-glass: oklch(1 0 0 / 0.03);
-  --color-border-glass: oklch(1 0 0 / 0.08);
-  --color-border-strong: oklch(1 0 0 / 0.15);
+  /* --- 📏 Structural Tokens --- */
+  --color-border-subtle: oklch(1 0 0 / 0.05);
+  --color-border-medium: oklch(1 0 0 / 0.1);
 
-  /* --- 🚦 State Colors --- */
-  --color-success: oklch(0.75 0.15 150);
-  --color-error: oklch(0.65 0.2 20);
-  --color-warning: oklch(0.8 0.15 80);
-  --color-info: oklch(0.7 0.15 220);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
 
-  /* --- 📏 Design Tokens --- */
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.75rem;
-  --shadow-premium: 0 20px 40px -15px oklch(0 0 0 / 0.5);
-  
-  --animate-fade-up: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  --animate-shake: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-fade-in: fadeIn 0.3s ease-out forwards;
 }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes shake {
-  10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 :root {
   background-color: var(--color-neutral-950);
   color: var(--color-neutral-100);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   color-scheme: dark;
   -webkit-font-smoothing: antialiased;
 }
@@ -64,40 +44,27 @@ body {
   min-height: 100vh;
 }
 
-/* --- 🛠️ Custom Utilities --- */
+/* --- 🛠️ Minimalist Utilities --- */
 
-@utility glass {
-  background: var(--color-surface-glass);
-  backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid var(--color-border-glass);
+@utility border-minimal {
+  border: 1px solid var(--color-border-subtle);
 }
 
-@utility glass-interactive {
-  @apply glass transition-all duration-300 hover:border-brand-primary/40 hover:bg-white/[0.05];
+@utility text-meta {
+  @apply text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-400;
 }
 
-@utility text-minimal-label {
-  @apply text-[10px] font-black uppercase tracking-[0.15em] opacity-40;
+@utility btn-minimal {
+  @apply px-4 py-2 border-minimal rounded-md hover:bg-neutral-900 transition-colors text-[11px] font-bold uppercase tracking-widest;
 }
 
-@utility badge-status {
-  @apply px-2 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase border;
-}
-
-/* Scrollbar Customization */
+/* Scrollbar: Invisible until hover */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
-
-::-webkit-scrollbar-track {
+::-webkit-scrollbar-thumb {
   background: transparent;
 }
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-border-glass);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-brand-primary);
+:hover::-webkit-scrollbar-thumb {
+  background: var(--color-border-medium);
 }

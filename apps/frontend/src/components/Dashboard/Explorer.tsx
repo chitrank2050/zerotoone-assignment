@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { Sparkles, Target } from 'lucide-react';
-
 import { useChatContext } from '../../context/ChatContextCore';
 import SignalCard from '../SignalCard';
 
@@ -11,22 +9,19 @@ export const Explorer: React.FC = () => {
   const totalReach = signals.reduce((acc, s) => acc + (s.reach || 0), 0);
 
   return (
-    <aside className="w-80 border-l border-border-glass glass hidden xl:flex flex-col z-20">
-      <div className="p-6 border-b border-border-glass">
-        <h3 className="font-bold flex items-center gap-2 text-sm text-neutral-50">
-          <Sparkles className="w-4 h-4 text-brand-primary" aria-hidden="true" />
-          Intelligence Layer
+    <aside className="w-80 border-l border-border-subtle bg-neutral-950 hidden xl:flex flex-col z-20 animate-fade-in text-neutral-100">
+      <div className="p-8 border-b border-border-subtle">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-2">
+          Targeting Signals
         </h3>
-        <p className="text-minimal-label mt-1">Extracted Targeting</p>
       </div>
 
-      <div className="flex-1 p-6 space-y-4 overflow-y-auto">
+      <div className="flex-1 p-8 space-y-8 overflow-y-auto">
         {signals.length === 0 ? (
-          <div className="glass p-6 border-dashed opacity-40 text-center py-12 rounded-3xl flex flex-col items-center justify-center">
-            <div className="w-12 h-12 bg-neutral-900 rounded-full flex items-center justify-center mb-4 border border-border-glass">
-              <Target className="w-6 h-6 text-neutral-500" aria-hidden="true" />
-            </div>
-            <p className="text-minimal-label">Awaiting Signals</p>
+          <div className="py-12 text-center opacity-30">
+            <p className="text-[10px] font-bold uppercase tracking-widest">
+              Null Set
+            </p>
           </div>
         ) : (
           signals.map((s) => (
@@ -35,23 +30,17 @@ export const Explorer: React.FC = () => {
         )}
       </div>
 
-      <div className="p-6 bg-brand-primary/5 border-t border-border-glass backdrop-blur-2xl">
-        <div className="flex justify-between items-end mb-6">
+      <div className="p-8 border-t border-border-subtle">
+        <div className="flex justify-between items-baseline mb-8">
           <div>
-            <p className="text-minimal-label mb-1">Total Estimates</p>
-            <h4 className="text-4xl font-black tabular-nums tracking-tighter text-neutral-50">
+            <p className="text-meta mb-1">Total Reach</p>
+            <h4 className="text-4xl font-bold tabular-nums tracking-tighter text-neutral-50">
               {new Intl.NumberFormat().format(totalReach)}
             </h4>
           </div>
-          <div className="text-right">
-            <p className="text-minimal-label mb-1">Sync</p>
-            <p className="text-xs font-bold text-success uppercase tracking-wider">
-              Latest
-            </p>
-          </div>
         </div>
-        <button className="w-full py-4 bg-brand-primary text-white text-[11px] font-black uppercase tracking-widest rounded-2xl shadow-premium hover:brightness-110 hover:-translate-y-0.5 transition-all active:scale-95 disabled:grayscale disabled:opacity-50">
-          Commit Segment
+        <button className="w-full py-3 border border-neutral-100 text-neutral-100 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-neutral-100 hover:text-neutral-950 transition-colors active:scale-[0.98] disabled:opacity-10">
+          Commit Parameters
         </button>
       </div>
     </aside>

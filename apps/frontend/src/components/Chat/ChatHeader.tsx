@@ -1,21 +1,18 @@
-import React from 'react';
-
 import { ShieldCheck } from 'lucide-react';
 
 export const ChatHeader: React.FC = () => (
-  <header className="h-16 border-b border-border-glass flex items-center justify-between px-8 glass backdrop-blur-sm z-10">
-    <div className="flex items-center gap-2">
-      <h2 className="font-semibold tracking-tight text-neutral-100">
-        Campaign Intelligence
-      </h2>
-      <span className="badge-status bg-brand-primary/10 text-brand-primary border-brand-primary/20">
-        Extraction: Active
-      </span>
-    </div>
+  <header className="h-16 border-b border-border-subtle flex items-center justify-between px-8 z-10">
     <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2 text-minimal-label bg-neutral-900 px-3 py-1.5 rounded-full border border-border-glass">
-        <ShieldCheck className="w-3.5 h-3.5 text-success" />
-        <span>Observability: ON</span>
+      <h2 className="text-sm font-bold tracking-tight text-neutral-100 uppercase">
+        Intelligence
+      </h2>
+      <div className="h-4 w-px bg-border-subtle" />
+      <span className="text-meta">Status: Active</span>
+    </div>
+    <div className="flex items-center gap-6">
+      <div className="flex items-center gap-2 text-meta">
+        <ShieldCheck className="w-3 h-3 text-neutral-400" />
+        <span>Observability Enabled</span>
       </div>
     </div>
   </header>

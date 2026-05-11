@@ -1,12 +1,6 @@
 import React from 'react';
 
-import {
-  BarChart3,
-  MessageSquare,
-  Settings,
-  Target,
-  User as UserIcon,
-} from 'lucide-react';
+import { BarChart3, MessageSquare, Settings, Target } from 'lucide-react';
 
 export const NavItem: React.FC<{
   icon: React.ReactNode;
@@ -14,58 +8,51 @@ export const NavItem: React.FC<{
   active?: boolean;
 }> = ({ icon, label, active }) => (
   <div
-    className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 cursor-pointer group ${
-      active
-        ? 'bg-brand-primary text-white shadow-premium'
-        : 'hover:bg-neutral-800 text-neutral-400 hover:text-neutral-100 border border-transparent'
+    className={`flex items-center gap-4 px-2 py-2 transition-all duration-200 cursor-pointer group ${
+      active ? 'text-neutral-50' : 'text-neutral-500 hover:text-neutral-300'
     }`}
   >
-    <span className="w-5 h-5" aria-hidden="true">
+    <span
+      className="w-4 h-4 opacity-70 group-hover:opacity-100"
+      aria-hidden="true"
+    >
       {icon}
     </span>
-    <span className="text-xs font-bold uppercase tracking-widest hidden lg:block">
+    <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:block">
       {label}
     </span>
   </div>
 );
 
 export const Sidebar: React.FC = () => (
-  <aside className="w-20 lg:w-64 border-r border-border-glass glass flex flex-col p-4 z-20">
-    <div className="flex items-center gap-3 px-2 mb-12">
-      <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-premium">
-        <Target className="text-white w-6 h-6" aria-hidden="true" />
+  <aside className="w-20 lg:w-56 border-r border-border-subtle bg-neutral-950 flex flex-col p-6 z-20 animate-fade-in text-neutral-100">
+    <div className="flex items-center gap-3 mb-16">
+      <div className="w-8 h-8 border border-neutral-100 flex items-center justify-center">
+        <Target className="text-neutral-100 w-4 h-4" aria-hidden="true" />
       </div>
-      <span className="font-bold text-xl hidden lg:block tracking-tighter text-neutral-50">
-        AudienceAI
+      <span className="font-bold text-xs hidden lg:block tracking-widest uppercase">
+        Core
       </span>
     </div>
 
-    <nav className="flex-1 space-y-2">
+    <nav className="flex-1 space-y-6">
       <NavItem
-        icon={<MessageSquare className="w-5 h-5" />}
-        label="Active Build"
+        icon={<MessageSquare className="w-4 h-4" />}
+        label="Intelligence"
         active
       />
-      <NavItem icon={<BarChart3 className="w-5 h-5" />} label="Analytics" />
-      <NavItem icon={<Settings className="w-5 h-5" />} label="Settings" />
+      <NavItem icon={<BarChart3 className="w-4 h-4" />} label="Analysis" />
+      <NavItem icon={<Settings className="w-4 h-4" />} label="Config" />
     </nav>
 
-    <div className="mt-auto pt-6 border-t border-border-glass">
-      <div className="flex items-center gap-3 px-2 py-3 rounded-xl hover:bg-neutral-800 transition-colors cursor-pointer group">
-        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-brand-primary to-brand-secondary p-px">
-          <div className="w-full h-full rounded-full bg-neutral-900 flex items-center justify-center">
-            <UserIcon
-              className="w-4 h-4 text-brand-primary"
-              aria-hidden="true"
-            />
-          </div>
-        </div>
-        <div className="hidden lg:block">
-          <p className="text-sm font-semibold truncate text-neutral-100">
-            Planner #01
-          </p>
-          <p className="text-minimal-label truncate">Principal Grade</p>
-        </div>
+    <div className="mt-auto pt-6 border-t border-border-subtle">
+      <div className="flex flex-col gap-1 px-2 py-2 group cursor-default">
+        <p className="text-[10px] font-bold uppercase tracking-tighter truncate">
+          Planner:01
+        </p>
+        <p className="text-[8px] text-neutral-600 uppercase tracking-[0.2em]">
+          Auth: Verified
+        </p>
       </div>
     </div>
   </aside>

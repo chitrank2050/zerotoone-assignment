@@ -1,7 +1,3 @@
-import React from 'react';
-
-import { Bot, Sparkles, User as UserIcon } from 'lucide-react';
-
 import { useChatContext } from '../../context/ChatContextCore';
 
 export const ChatFeed: React.FC = () => {
@@ -9,82 +5,48 @@ export const ChatFeed: React.FC = () => {
   const { messages, isTyping, error } = state;
 
   return (
-    <div className="flex-1 overflow-y-auto p-8 space-y-8 scroll-smooth">
+    <div className="flex-1 overflow-y-auto p-8 space-y-12 animate-fade-in">
       {messages.length === 0 && (
-        <div className="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto space-y-6">
-          <div className="w-20 h-20 bg-brand-primary/5 rounded-[2.5rem] flex items-center justify-center border border-brand-primary/10 shadow-inner ring-4 ring-brand-primary/5">
-            <Sparkles className="w-10 h-10 text-brand-primary animate-pulse" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-3xl font-black tracking-tighter text-neutral-50">
-              Ready to Build?
-            </h3>
-            <p className="text-sm text-neutral-400 leading-relaxed font-medium">
-              Describe your target segment. The AI will extract signals and
-              calculate reach in real-time.
-            </p>
-          </div>
+        <div className="h-full flex flex-col items-center justify-center text-center max-w-sm mx-auto space-y-4">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-100">
+            Null State
+          </h3>
+          <p className="text-xs text-neutral-500 leading-relaxed font-medium tracking-wide">
+            Describe segment parameters. System will extract targeting signals.
+          </p>
         </div>
       )}
 
       {messages.map((m) => (
-        <div
-          key={m.id}
-          className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-up`}
-        >
-          <div
-            className={`flex gap-4 max-w-2xl ${m.role === 'user' ? 'flex-row-reverse' : ''}`}
-          >
-            <div
-              className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${
-                m.role === 'user'
-                  ? 'bg-neutral-800 border border-neutral-700'
-                  : 'bg-brand-primary/10 border border-brand-primary/20'
-              }`}
-            >
-              {m.role === 'user' ? (
-                <UserIcon
-                  className="w-5 h-5 text-neutral-400"
-                  aria-hidden="true"
-                />
-              ) : (
-                <Bot
-                  className="w-5 h-5 text-brand-primary"
-                  aria-hidden="true"
-                />
-              )}
-            </div>
-            <div
-              className={`p-4 rounded-2xl ${
-                m.role === 'user'
-                  ? 'bg-brand-primary text-white shadow-premium'
-                  : 'glass border border-border-glass text-neutral-200'
-              }`}
-            >
-              <p className="text-sm leading-relaxed font-medium">{m.content}</p>
-            </div>
+        <div key={m.id} className="group flex flex-col space-y-2 max-w-2xl">
+          <div className="flex items-center gap-3">
+            <span className="text-meta">
+              {m.role === 'user' ? 'Operator' : 'System'}
+            </span>
+            <div className="h-px flex-1 bg-border-subtle opacity-50" />
+          </div>
+          <div className="pl-4 border-l border-border-subtle">
+            <p className="text-sm leading-relaxed text-neutral-300 font-medium">
+              {m.content}
+            </p>
           </div>
         </div>
       ))}
 
       {isTyping && (
-        <div className="flex justify-start animate-fade-up">
-          <div className="flex gap-4">
-            <div className="w-10 h-10 rounded-2xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center">
-              <Bot className="w-5 h-5 text-brand-primary" aria-hidden="true" />
-            </div>
-            <div className="glass px-6 py-4 flex items-center gap-1.5 rounded-2xl border border-border-glass">
-              <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
-              <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
-              <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-bounce" />
-            </div>
+        <div className="flex items-center gap-3 animate-pulse">
+          <span className="text-meta">System</span>
+          <div className="flex gap-1">
+            <div className="w-1 h-1 bg-neutral-400 rounded-full" />
+            <div className="w-1 h-1 bg-neutral-400 rounded-full" />
+            <div className="w-1 h-1 bg-neutral-400 rounded-full" />
           </div>
         </div>
       )}
 
       {error && (
-        <div className="bg-error/10 border border-error/20 text-error p-4 rounded-2xl text-minimal-label text-center animate-shake">
-          {error}
+        <div className="text-meta text-neutral-200 bg-neutral-900/50 p-4 border-minimal border-neutral-800/50">
+          Error: {error}
         </div>
       )}
     </div>
