@@ -8,7 +8,7 @@ export const ChatInput: React.FC = () => {
   const { state, actions } = useChatContext();
   const [input, setInput] = useState('');
 
-  const handleSend = async (e: React.FormEvent) => {
+  const handleSend = async (e: React.SubmitEvent) => {
     e.preventDefault();
     if (!input.trim() || state.isTyping) return;
 
