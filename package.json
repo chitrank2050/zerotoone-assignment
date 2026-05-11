@@ -1,6 +1,37 @@
 {
   "name": "audience-builder-monorepo",
   "private": true,
+  "version": "1.0.0",
+  "description": "AI-driven audience segmentation and targeting platform.",
+  "author": {
+    "name": "Chitrank Agnihotri",
+    "email": "chitrank2050@gmail.com",
+    "url": "https://www.chitrankagnihotri.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chitrank2050/zerotoone-assignment"
+  },
+  "bugs": {
+    "url": "https://github.com/chitrank2050/zerotoone-assignment/issues"
+  },
+  "keywords": [
+    "ai",
+    "audience-builder",
+    "targeting",
+    "advertising",
+    "segmentation",
+    "nestjs",
+    "react",
+    "turborepo",
+    "gemini-ai",
+    "libsql",
+    "prisma",
+    "monorepo",
+    "typescript"
+  ],
+
   "scripts": {
     "// --- 🚀 Core ---": "",
     "dev": "turbo run dev",
@@ -47,6 +78,10 @@
     "typescript-eslint": "^8.59.2"
   },
   "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.0.0"
+  },
   "git-hygiene": {
     "ignoreBranches": [
       "main"
