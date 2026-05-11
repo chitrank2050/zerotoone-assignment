@@ -1,31 +1,77 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-brand: #6366f1;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f8fafc;
-  --color-border: #e2e8f0;
+  --color-brand-primary: oklch(0.65 0.24 250);
+  --color-brand-secondary: oklch(0.7 0.2 300);
+  --color-surface-glass: oklch(1 0 0 / 0.05);
+  --color-border-glass: oklch(1 0 0 / 0.1);
+
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --background: oklch(0.1 0 0);
+  --foreground: oklch(0.9 0 0);
+  --accent: var(--color-brand-primary);
 
-  color-scheme: light dark;
-  color: #1e293b;
-  background-color: #f1f5f9;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  color-scheme: dark;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  background-color: var(--background);
+  color: var(--foreground);
   min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+@utility glass {
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-xl);
+}
+
+@utility glass-card {
+  @apply glass p-6 shadow-2xl transition-all duration-300 hover:border-brand-primary/30;
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-glass);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-primary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }

@@ -1,0 +1,19 @@
+meta {
+  name: Get Transactions
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/{{apiPrefix}}/{{apiVersion}}/taxonomy/transactions
+  body: none
+  auth: bearer
+}
+
+params:query {
+  ~q: coffee
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

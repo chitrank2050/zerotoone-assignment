@@ -1,332 +1,281 @@
-/**
- * AudienceBuilder Dashboard - Main Interface (Tailwind Refactor)
- *
- * High-performance React 19 application orchestrating real-time AI audience builds.
- * Now powered by TailwindCSS v4 for utility-first styling.
- *
- * Architecture:
- *   - Layout: Flex/Grid hybrid for a modern sidebar-main-control shell.
- *   - UI: Glassmorphism surfaces (bg-white/80 + blur) and Indigo accents.
- *   - Components: Functional Tailwind classes for Sidebar, Chat, and Panels.
- */
-import { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
-  Loader2,
-  LogOut,
+  BarChart3,
+  Bot,
   MessageSquare,
-  Plus,
   Send,
   Settings,
-  Users,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  User as UserIcon,
 } from 'lucide-react';
 
-import type { Conversation, Message } from '@audience-builder/shared';
+import { SignalCard } from './components/SignalCard';
+import { useChat } from './hooks/useChat';
 
-import './index.css';
-
-// Tailwind v4 entry point
-
-const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3000';
-
-function App() {
-  // --- Global State ---
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [activeConvId, setActiveConvId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
+/**
+ * AI Audience Builder - Principal Grade Dashboard
+ *
+ * A high-density UI featuring:
+ * - Real-time AI Chat Interface
+ * - Signal Visualization Panel
+ * - Observability Status Bar
+ */
+const App: React.FC = () => {
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const { messages, signals, isTyping, error, sendMessage, removeSignal } =
+    useChat();
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isTyping) return;
 
-  /**
-   * Lifecycle: Bootstraps the application build history.
-   */
-  useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/chat/conversations`);
-        const json = await res.json();
-        if (json.success) setConversations(json.data);
-      } catch (error) {
-        console.error('[Hydration Error] Failed to load builds:', error);
-      }
-    };
-    fetchConversations();
-  }, []);
-
-  /**
-   * Lifecycle: Synchronizes message threads on session selection.
-   */
-  useEffect(() => {
-    if (activeConvId) {
-      const fetchMessages = async (id: string) => {
-        try {
-          const res = await fetch(
-            `${API_BASE}/chat/conversations/${id}/messages`,
-          );
-          const json = await res.json();
-          if (json.success) setMessages(json.data);
-        } catch (error) {
-          console.error('[Hydration Error] Failed to load messages:', error);
-        }
-      };
-      fetchMessages(activeConvId);
-    }
-  }, [activeConvId]);
-
-  /**
-   * Action: Spawns a new audience build session.
-   */
-  const createConversation = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/chat/conversations`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: 'New Build' }),
-      });
-      const json = await res.json();
-      if (json.success) {
-        setConversations((prev) => [json.data, ...prev]);
-        setActiveConvId(json.data.id);
-      }
-    } catch (error) {
-      console.error('[Creation Error] Failed to initialize build:', error);
-    }
-  };
-
-  /**
-   * Action: AI Integration - Natural language audience mapping.
-   */
-  const handleSend = async () => {
-    if (!input.trim() || !activeConvId) return;
-
-    const userMsg = { role: 'user' as const, content: input };
-    setMessages([...messages, userMsg]);
+    const content = input;
     setInput('');
-    setIsLoading(true);
-
-    try {
-      const res = await fetch(
-        `${API_BASE}/chat/conversations/${activeConvId}/messages`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: input }),
-        },
-      );
-      const json = await res.json();
-
-      if (json.success) {
-        setMessages((prev) => [
-          ...prev,
-          { role: 'agent' as const, content: json.data },
-        ]);
-      }
-    } catch (error) {
-      console.error('[AI Error] Propagation failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    await sendMessage(content);
   };
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  const totalReach = signals.reduce((acc, s) => acc + (s.reach || 0), 0);
 
   return (
-    <div className="flex h-screen w-screen bg-slate-50 overflow-hidden font-sans text-slate-900">
-      {/* ─── Sidebar ─── */}
-      <aside className="w-72 flex flex-col bg-white border-r border-slate-200">
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-indigo-600 rounded-lg">
-              <Users size={20} className="text-white" />
-            </div>
-            <span className="font-bold text-lg tracking-tight">
-              AudienceBuilder
-            </span>
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
+      {/* --- 🛠️ Sidebar (Navigation) --- */}
+      <aside className="w-20 lg:w-64 border-r border-border-glass bg-surface-glass backdrop-blur-xl flex flex-col p-4 z-20">
+        <div className="flex items-center gap-3 px-2 mb-10">
+          <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/20">
+            <Target className="text-white w-6 h-6" />
           </div>
-
-          <button
-            onClick={createConversation}
-            className="w-full flex items-center justify-center gap-2 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all shadow-lg shadow-indigo-100 font-semibold"
-          >
-            <Plus size={18} />
-            <span>New Build</span>
-          </button>
+          <span className="font-bold text-xl hidden lg:block tracking-tight">
+            AudienceAI
+          </span>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4">
-          <p className="px-2 mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">
-            Recent Builds
-          </p>
-          <div className="space-y-1">
-            {conversations.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveConvId(c.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all text-left ${
-                  activeConvId === c.id
-                    ? 'bg-indigo-50 text-indigo-700 font-semibold shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-50'
-                }`}
-              >
-                <MessageSquare
-                  size={16}
-                  className={
-                    activeConvId === c.id ? 'text-indigo-600' : 'text-slate-400'
-                  }
-                />
-                <span className="truncate">{c.title}</span>
-              </button>
-            ))}
-          </div>
+        <nav className="flex-1 space-y-2">
+          <NavItem icon={<MessageSquare />} label="Active Build" active />
+          <NavItem icon={<BarChart3 />} label="Analytics" />
+          <NavItem icon={<Settings />} label="Settings" />
         </nav>
 
-        <div className="p-4 mt-auto border-t border-slate-100">
-          <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                JD
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold">John Doe</span>
-                <span className="text-[11px] text-slate-400 uppercase font-bold tracking-wider">
-                  Planner
-                </span>
+        <div className="mt-auto pt-6 border-t border-border-glass">
+          <div className="flex items-center gap-3 px-2 py-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-primary to-brand-secondary p-[1px]">
+              <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
+                <UserIcon className="w-4 h-4 text-brand-primary" />
               </div>
             </div>
-            <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
-              <LogOut size={18} />
-            </button>
+            <div className="hidden lg:block">
+              <p className="text-sm font-semibold truncate">Planner #01</p>
+              <p className="text-xs opacity-50 truncate uppercase tracking-tighter">
+                Principal Grade
+              </p>
+            </div>
           </div>
         </div>
       </aside>
 
-      {/* ─── Main Content ─── */}
-      <main className="flex-1 flex flex-col bg-slate-50">
-        <header className="h-20 flex items-center justify-between px-8 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-10">
-          <h2 className="text-xl font-bold tracking-tight">
-            {activeConvId
-              ? conversations.find((c) => c.id === activeConvId)?.title
-              : 'Select a build'}
-          </h2>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm">
-            <Settings size={18} />
-            Settings
-          </button>
+      {/* --- 🧠 Main Content (Chat Engine) --- */}
+      <main className="flex-1 flex flex-col relative overflow-hidden bg-background">
+        {/* Header */}
+        <header className="h-16 border-b border-border-glass flex items-center justify-between px-8 bg-surface-glass backdrop-blur-sm z-10">
+          <div className="flex items-center gap-2">
+            <h2 className="font-semibold tracking-tight">
+              Campaign Intelligence
+            </h2>
+            <span className="px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-[10px] font-bold tracking-widest uppercase border border-brand-primary/20">
+              Extraction: Active
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-50 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+              <ShieldCheck className="w-3.5 h-3.5 text-green-500" />
+              <span>Observability: ON</span>
+            </div>
+          </div>
         </header>
 
+        {/* Chat Feed */}
         <div className="flex-1 overflow-y-auto p-8 space-y-6">
-          {messages.length === 0 && !activeConvId && (
-            <div className="h-full flex flex-col items-center justify-center text-center">
-              <div className="p-6 bg-white rounded-3xl shadow-xl shadow-slate-200/50 mb-6">
-                <Users size={64} className="text-slate-200" />
+          {messages.length === 0 && (
+            <div className="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto space-y-4">
+              <div className="w-20 h-20 bg-brand-primary/5 rounded-3xl flex items-center justify-center mb-4 border border-brand-primary/10 shadow-inner">
+                <Sparkles className="w-10 h-10 text-brand-primary animate-pulse" />
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-2">
+              <h3 className="text-3xl font-black tracking-tighter">
                 Ready to Build?
               </h3>
-              <p className="text-slate-400 max-w-xs mx-auto">
-                Select an existing build or create a new one to start defining
-                your audience segments with AI.
+              <p className="text-sm opacity-50 leading-relaxed font-medium">
+                Describe your target segment (e.g., "Tech-savvy gamers in
+                Seattle who love organic coffee"). The AI will extract signals
+                and calculate reach in real-time.
               </p>
             </div>
           )}
 
-          {messages.map((m, i) => (
+          {messages.map((m) => (
             <div
-              key={i}
-              className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              key={m.id}
+              className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
             >
               <div
-                className={`max-w-[70%] p-5 rounded-3xl text-sm leading-relaxed shadow-sm ${
-                  m.role === 'user'
-                    ? 'bg-indigo-600 text-white rounded-tr-none'
-                    : 'bg-white border border-slate-200 text-slate-700 rounded-tl-none'
-                }`}
+                className={`flex gap-4 max-w-2xl ${m.role === 'user' ? 'flex-row-reverse' : ''}`}
               >
-                {m.content}
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg ${
+                    m.role === 'user'
+                      ? 'bg-white/5 border border-white/10'
+                      : 'bg-brand-primary/10 border border-brand-primary/20'
+                  }`}
+                >
+                  {m.role === 'user' ? (
+                    <UserIcon className="w-5 h-5" />
+                  ) : (
+                    <Bot className="w-5 h-5 text-brand-primary" />
+                  )}
+                </div>
+                <div
+                  className={`p-4 rounded-2xl ${
+                    m.role === 'user'
+                      ? 'bg-brand-primary text-white shadow-xl shadow-brand-primary/20'
+                      : 'glass border border-white/10'
+                  }`}
+                >
+                  <p className="text-sm leading-relaxed font-medium">
+                    {m.content}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
 
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="flex items-center gap-3 p-5 bg-white border border-slate-200 rounded-3xl rounded-tl-none shadow-sm text-sm text-slate-500 italic">
-                <Loader2 size={18} className="animate-spin text-indigo-600" />
-                Gemini is processing segment mapping...
+          {isTyping && (
+            <div className="flex justify-start animate-fade-in">
+              <div className="flex gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-primary/10 border border-brand-primary/20 flex items-center justify-center">
+                  <Bot className="w-5 h-5 text-brand-primary" />
+                </div>
+                <div className="glass px-6 py-4 flex items-center gap-1.5 rounded-2xl border border-white/5">
+                  <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
+                  <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
+                  <div className="w-1.5 h-1.5 bg-brand-primary rounded-full animate-bounce" />
+                </div>
               </div>
             </div>
           )}
-          <div ref={messagesEndRef} />
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-2xl text-xs font-bold uppercase tracking-widest text-center animate-shake">
+              {error}
+            </div>
+          )}
         </div>
 
-        <footer className="p-8 bg-gradient-to-t from-slate-50 to-transparent">
-          <div className="max-w-4xl mx-auto flex items-center gap-3 p-2 bg-white rounded-2xl shadow-2xl shadow-indigo-100 border border-slate-200 ring-4 ring-slate-100">
+        {/* Input Dock */}
+        <div className="p-8 pt-0">
+          <form
+            onSubmit={handleSend}
+            className="glass relative group p-1.5 pr-3 flex items-center gap-2 focus-within:border-brand-primary/50 transition-all shadow-2xl rounded-2xl"
+          >
             <input
               type="text"
-              placeholder={
-                activeConvId
-                  ? 'Describe your ideal audience segment...'
-                  : 'Select a build to begin'
-              }
-              disabled={!activeConvId || isLoading}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              className="flex-1 px-4 py-3 bg-transparent outline-none text-sm placeholder:text-slate-400"
+              placeholder="Enter natural language audience request..."
+              className="flex-1 bg-transparent border-none outline-none px-5 py-4 text-sm placeholder:opacity-40 font-medium"
             />
             <button
-              onClick={handleSend}
-              disabled={!activeConvId || isLoading}
-              className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 transition-all shadow-md active:scale-95"
+              type="submit"
+              disabled={!input.trim() || isTyping}
+              className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/30 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:grayscale"
             >
-              <Send size={20} />
+              <Send className="w-5 h-5 text-white" />
             </button>
+          </form>
+          <div className="flex justify-center mt-4">
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5">
+              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <p className="text-[9px] opacity-40 tracking-[0.2em] uppercase font-black">
+                Gemini 1.5 Protocol Active
+              </p>
+            </div>
           </div>
-        </footer>
+        </div>
       </main>
 
-      {/* ─── Control Panel ─── */}
-      <aside className="w-80 bg-white border-l border-slate-200 flex flex-col p-6 overflow-y-auto">
-        <section className="mb-10">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">
-            Real-time Reach
+      {/* --- 📊 Signal Explorer (Right Panel) --- */}
+      <aside className="w-80 border-l border-border-glass bg-surface-glass/30 backdrop-blur-xl hidden xl:flex flex-col z-20">
+        <div className="p-6 border-b border-border-glass">
+          <h3 className="font-bold flex items-center gap-2 text-sm">
+            <Sparkles className="w-4 h-4 text-brand-primary" />
+            Intelligence Layer
           </h3>
-          <div className="p-8 bg-slate-50 rounded-3xl text-center border border-slate-100">
-            <p className="text-4xl font-black text-slate-900 tracking-tighter mb-1">
-              1.2M
-            </p>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-              Reachable Users
-            </p>
-          </div>
-        </section>
+          <p className="text-[10px] uppercase font-black tracking-widest opacity-30 mt-1">
+            Extracted Targeting
+          </p>
+        </div>
 
-        <section className="flex-1">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">
-              Targeting Signals
-            </h3>
-            <span className="px-2 py-0.5 bg-slate-100 text-[10px] font-bold text-slate-500 rounded-full">
-              0 ACTIVE
-            </span>
-          </div>
+        <div className="flex-1 p-6 space-y-4 overflow-y-auto">
+          {signals.length === 0 ? (
+            <div className="glass p-6 border-dashed opacity-40 text-center py-12 rounded-3xl flex flex-col items-center justify-center">
+              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                <Target className="w-6 h-6 opacity-50" />
+              </div>
+              <p className="text-[10px] font-black uppercase tracking-widest">
+                Awaiting Signals
+              </p>
+            </div>
+          ) : (
+            signals.map((s) => (
+              <SignalCard key={s.id} signal={s} onRemove={removeSignal} />
+            ))
+          )}
+        </div>
 
-          <div className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-slate-100 rounded-3xl p-6 text-center">
-            <p className="text-sm text-slate-400 leading-relaxed italic">
-              No signals have been mapped to the audience yet.
-            </p>
+        <div className="p-6 bg-brand-primary/5 border-t border-border-glass backdrop-blur-2xl">
+          <div className="flex justify-between items-end mb-6">
+            <div>
+              <p className="text-[10px] uppercase font-black tracking-[0.1em] opacity-40 mb-1">
+                Total Estimates
+              </p>
+              <h4 className="text-4xl font-black tabular-nums tracking-tighter">
+                {new Intl.NumberFormat().format(totalReach)}
+              </h4>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] uppercase font-black tracking-[0.1em] opacity-40 mb-1">
+                Sync
+              </p>
+              <p className="text-xs font-bold text-brand-primary">LATEST</p>
+            </div>
           </div>
-        </section>
-
-        <button className="w-full py-4 mt-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-sm tracking-tight transition-all shadow-xl shadow-indigo-100 active:scale-[0.98]">
-          Approve & Build Segment
-        </button>
+          <button className="w-full py-4 bg-brand-primary text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-brand-primary/30 hover:brightness-110 hover:translate-y-[-2px] transition-all active:scale-95 disabled:grayscale disabled:opacity-50">
+            Commit Segment
+          </button>
+        </div>
       </aside>
     </div>
   );
-}
+};
+
+const NavItem: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+}> = ({ icon, label, active }) => (
+  <div
+    className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all cursor-pointer group ${
+      active
+        ? 'bg-brand-primary text-white shadow-xl shadow-brand-primary/20'
+        : 'hover:bg-white/5 opacity-50 hover:opacity-100 border border-transparent hover:border-white/5'
+    }`}
+  >
+    <span className="w-5 h-5">{icon}</span>
+    <span className="text-xs font-bold uppercase tracking-widest hidden lg:block">
+      {label}
+    </span>
+  </div>
+);
 
 export default App;

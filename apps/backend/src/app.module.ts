@@ -21,8 +21,6 @@ import { HealthModule } from '@modules/health';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { TaxonomyModule } from '@modules/taxonomy/taxonomy.module';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
@@ -38,8 +36,8 @@ import { RequestLoggerMiddleware } from './common/middleware/request-logger.midd
     TaxonomyModule,
     ChatModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   /**
@@ -50,6 +48,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(CorrelationIdMiddleware, RequestLoggerMiddleware)
-      .forRoutes('*');
+      .forRoutes('*path');
   }
 }

@@ -103,10 +103,6 @@ async function bootstrap(): Promise<void> {
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
 
-  console.log(
-    `[🚀] AI Audience Builder Backend is live at: http://localhost:${port}`,
-  );
-
   console.log(`
   ┌──────────────────────────────────────────────┐
   │  AI Audience Builder API running             │

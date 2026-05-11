@@ -1,0 +1,19 @@
+meta {
+  name: Get Locations
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/{{apiPrefix}}/{{apiVersion}}/taxonomy/locations
+  body: none
+  auth: bearer
+}
+
+params:query {
+  ~q: london
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}

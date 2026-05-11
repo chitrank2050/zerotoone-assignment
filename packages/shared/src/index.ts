@@ -64,6 +64,9 @@ export interface Signal {
   name: string;
   path: string;
   type: 'location' | 'transaction' | 'cg';
+  category?: string;
+  reach?: number;
+  confidence?: number;
 }
 
 /**

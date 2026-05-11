@@ -1,0 +1,25 @@
+meta {
+  name: Send Message
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/{{apiPrefix}}/{{apiVersion}}/chat/conversations/:id/messages
+  body: json
+  auth: bearer
+}
+
+params:path {
+  id: 
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "text": "I want to target people in London who love coffee and high-end watches"
+  }
+}

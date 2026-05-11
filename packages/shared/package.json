@@ -24,6 +24,8 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
+    "lint": "eslint . --fix",
+    "build": "tsc",
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {

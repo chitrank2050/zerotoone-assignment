@@ -1,0 +1,24 @@
+meta {
+  name: Login Planner
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/{{apiPrefix}}/{{apiVersion}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "planner@example.com",
+    "password": "password123"
+  }
+}
+
+script:post-response {
+  if (res.status === 201 || res.status === 200) {
+    bru.setEnvVar("accessToken", res.body.access_token);
+  }
+}
