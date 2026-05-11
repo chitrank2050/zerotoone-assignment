@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import {
+  GoogleGenerativeAI,
+  GenerativeModel,
+  Content,
+} from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
+import { LocationTaxonomy, TransactionTaxonomy, Message } from '@prisma/client';
 
 @Injectable()
 export class ChatService {
   private genAI: GoogleGenerativeAI;
-  private model: any;
+  private model: GenerativeModel;
 
   constructor(
     private configService: ConfigService,
@@ -55,10 +60,10 @@ export class ChatService {
       Your goal is to translate natural language descriptions of audiences into structured targeting signals.
       
       Available Location Taxonomy:
-      ${JSON.stringify(locations.map((l: any) => ({ id: l.externalId, path: l.path })))}
+      ${JSON.stringify(locations.map((l: LocationTaxonomy) => ({ id: l.externalId, path: l.path })))}
       
       Available Transaction Taxonomy:
-      ${JSON.stringify(transactions.map((t: any) => ({ id: t.externalId, path: t.path })))}
+      ${JSON.stringify(transactions.map((t: TransactionTaxonomy) => ({ id: t.externalId, path: t.path })))}
       
       Goal:
       - Interpret the user's audience description.
@@ -75,20 +80,24 @@ export class ChatService {
       orderBy: { createdAt: 'asc' },
     });
 
-    const chatHistory = history.map((m: any) => ({
+    const chatHistory: Content[] = history.map((m: Message) => ({
       role: m.role === 'user' ? 'user' : 'model',
       parts: [{ text: m.content }],
     }));
 
     // Add system instruction at the beginning if history is empty
-    if (chatHistory.length === 1) { // Only the user message we just added
+    if (chatHistory.length === 1) {
       chatHistory.unshift({
         role: 'user',
         parts: [{ text: systemPrompt }],
       });
       chatHistory.push({
         role: 'model',
-        parts: [{ text: "Understood. I will help you build your audience using the provided taxonomies." }],
+        parts: [
+          {
+            text: 'Understood. I will help you build your audience using the provided taxonomies.',
+          },
+        ],
       });
     }
 
@@ -97,11 +106,11 @@ export class ChatService {
     });
 
     const result = await chat.sendMessage(text);
-    const response = await result.response.text();
+    const responseText = result.response.text();
 
     // 4. Save agent response
     await this.prisma.message.create({
-      data: { conversationId, role: 'agent', content: response },
+      data: { conversationId, role: 'agent', content: responseText },
     });
 
     // Update conversation timestamp
@@ -110,6 +119,6 @@ export class ChatService {
       data: { updatedAt: new Date() },
     });
 
-    return response;
+    return responseText;
   }
 }

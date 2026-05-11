@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -16,13 +17,14 @@ export class AuthService {
     });
 
     if (user && user.password === loginDto.password) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
       return result;
     }
     return null;
   }
 
-  async login(user: any) {
+  login(user: Omit<User, 'password'>) {
     const payload = { email: user.email, sub: user.id, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),

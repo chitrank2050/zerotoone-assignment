@@ -9,6 +9,12 @@ const adapter = new PrismaLibSql({
 });
 const prisma = new PrismaClient({ adapter });
 
+interface TaxonomyItem {
+  id: string;
+  name: string;
+  path: string;
+}
+
 async function main() {
   console.log('Seeding data...');
 
@@ -35,8 +41,12 @@ async function main() {
 
   // 2. Load Location Taxonomy
   const locationData = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '../../../data/location_taxonomy.json'), 'utf8'),
-  );
+    fs.readFileSync(
+      path.join(__dirname, '../../../data/location_taxonomy.json'),
+      'utf8',
+    ),
+  ) as TaxonomyItem[];
+
   for (const item of locationData) {
     await prisma.locationTaxonomy.upsert({
       where: { externalId: item.id },
@@ -51,8 +61,12 @@ async function main() {
 
   // 3. Load Transaction Taxonomy
   const transactionData = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '../../../data/transaction_taxonomy.json'), 'utf8'),
-  );
+    fs.readFileSync(
+      path.join(__dirname, '../../../data/transaction_taxonomy.json'),
+      'utf8',
+    ),
+  ) as TaxonomyItem[];
+
   for (const item of transactionData) {
     await prisma.transactionTaxonomy.upsert({
       where: { externalId: item.id },

@@ -10,8 +10,11 @@ export class ChatController {
   async createConversation(@Body('title') title: string) {
     // In a real app, userId would come from JWT (req.user.id)
     // For this task, we'll use a placeholder or handle auth later
-    const userId = 'admin-user-id'; 
-    const result = await this.chatService.createConversation(userId, title || 'New Build');
+    const userId = 'admin-user-id';
+    const result = await this.chatService.createConversation(
+      userId,
+      title || 'New Build',
+    );
     return ApiResponse.ok(result);
   }
 

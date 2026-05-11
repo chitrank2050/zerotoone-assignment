@@ -8,7 +8,7 @@ export class TaxonomyController {
 
   @Get('locations')
   async getLocations(@Query('q') query?: string) {
-    const result = query 
+    const result = query
       ? await this.taxonomyService.searchLocations(query)
       : await this.taxonomyService.getAllLocations();
     return ApiResponse.ok(result);
@@ -16,7 +16,7 @@ export class TaxonomyController {
 
   @Get('transactions')
   async getTransactions(@Query('q') query?: string) {
-    const result = query 
+    const result = query
       ? await this.taxonomyService.searchTransactions(query)
       : await this.taxonomyService.getAllTransactions();
     return ApiResponse.ok(result);

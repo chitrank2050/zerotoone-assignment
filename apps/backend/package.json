@@ -18,12 +18,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:generate": "prisma generate",
+    "db:generate": "prisma generate --schema=prisma/schema.prisma",
     "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy && pnpm db:seed",
+    "db:deploy": "prisma migrate deploy --schema=prisma/schema.prisma && pnpm db:seed",
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@audience-builder/shared": "workspace:*",
     "@google/generative-ai": "^0.24.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",

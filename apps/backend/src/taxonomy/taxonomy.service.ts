@@ -8,10 +8,7 @@ export class TaxonomyService {
   async searchLocations(query: string) {
     return this.prisma.locationTaxonomy.findMany({
       where: {
-        OR: [
-          { name: { contains: query } },
-          { path: { contains: query } },
-        ],
+        OR: [{ name: { contains: query } }, { path: { contains: query } }],
       },
     });
   }
@@ -19,10 +16,7 @@ export class TaxonomyService {
   async searchTransactions(query: string) {
     return this.prisma.transactionTaxonomy.findMany({
       where: {
-        OR: [
-          { name: { contains: query } },
-          { path: { contains: query } },
-        ],
+        OR: [{ name: { contains: query } }, { path: { contains: query } }],
       },
     });
   }

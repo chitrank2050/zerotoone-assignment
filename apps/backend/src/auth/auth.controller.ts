@@ -13,7 +13,7 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const result = await this.authService.login(user);
+    const result = this.authService.login(user);
     return ApiResponse.ok(result);
   }
 }
