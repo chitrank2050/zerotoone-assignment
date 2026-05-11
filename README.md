@@ -18,11 +18,15 @@ The **AI Audience Builder** is a high-rigor, spec-driven monorepo designed for m
 
 ### 🧠 System Layers
 
-- **Systems Grade (`apps/backend`)**: High-performance NestJS 11 orchestration, LibSQL persistence, and Gemini-AI signal extraction.
+- **Systems Grade (`apps/backend`)**: Built to the same high-rigor standards as [Meterplex](https://chitrankagnihotri.com/project/7d38770b-ce1f-4fb0-a394-434e2a614cb2). It features a modular monolith architecture, LibSQL persistence, and Gemini-AI signal extraction.
 - **UX Grade (`apps/frontend`)**: Real-time reactive dashboard with "State-as-URL Truth" and glassmorphic aesthetics.
 - **Contract Grade (`packages/shared`)**: The single source of truth for all cross-boundary DTOs and machine-readable error keys.
 
+> [!TIP]
+> **Engineering Hygiene**: This project enforces strict branch and commit standards using [git-hygiene](https://chitrankagnihotri.com/project/5dd99f38-03b7-4ad4-abb2-e7641b2e504c), an in-house tool designed for high-performance engineering teams.
+
 ---
+
 
 ## 🤝 Shared Contract Governance
 
