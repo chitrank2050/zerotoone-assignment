@@ -71,6 +71,16 @@ export class ChatService {
   }
 
   /**
+   * Retrieves ALL session history globally (Admin only).
+   */
+  async getAllConversations() {
+    return this.prisma.conversation.findMany({
+      orderBy: { updatedAt: 'desc' },
+      include: { user: true },
+    });
+  }
+
+  /**
    * Hydrates the message history for a session.
    */
   async getMessages(conversationId: string) {

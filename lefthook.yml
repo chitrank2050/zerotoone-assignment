@@ -40,6 +40,9 @@ pre-push:
     build:
       run: pnpm build
 
+    check-types:
+      run: pnpm run check-types
+
     # Ensure branch naming follows standards
     branch-name:
       run: npx git-hygiene branch

@@ -10,16 +10,24 @@
  *
  * Performance: Leverages LibSQL 'contains' for performant path-based searching.
  */
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { ApiResponse as AppResponse } from '@common/responses/api-response';
 
 import { SearchTaxonomyDto } from './dto/search-taxonomy.dto';
 import { TaxonomyResponseDto } from './dto/taxonomy-response.dto';
 import { TaxonomyService } from './taxonomy.service';
+import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 
 @ApiTags('Taxonomy')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('taxonomy')
 export class TaxonomyController {
   constructor(private taxonomyService: TaxonomyService) {}

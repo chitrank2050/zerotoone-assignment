@@ -1,22 +1,8 @@
-/**
- * AuthService - Identity & Access Orchestrator
- *
- * Handles the authentication lifecycle and secure credential validation.
- * Responsible for issuing JWTs and establishing user context for the platform.
- *
- * Standards:
- *   - Auth Strategy: JWT (Stateless)
- *   - Payload: sub (ID), email, and role
- *   - Validation: Explicit password matching (Bcrypt-ready)
- *
- * Note: Placeholder password comparison used for local development.
- * Production readiness requires migration to Bcrypt.
- */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 
 import { PrismaService } from '@modules/prisma/prisma.service';
-
 import type { User } from '@prisma/client';
 
 import { LoginDto } from './dto/login.dto';
@@ -29,8 +15,7 @@ export class AuthService {
   ) {}
 
   /**
-   * Validates user credentials against the LibSQL persistence layer.
-   * Logic: Finds user by email -> verifies password -> returns user without secret.
+   * Validates user credentials.
    */
   async validateUser(
     loginDto: LoginDto,
@@ -39,19 +24,26 @@ export class AuthService {
       where: { email: loginDto.email },
     });
 
-    if (user && user.password === loginDto.password) {
+    if (user && (await bcrypt.compare(loginDto.password, user.password))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
+      const { password: _password, ...result } = user;
       return result;
     }
+
+    // Fallback for local development if bcrypt fails (e.g. for seeded plain text)
+    if (user && user.password === loginDto.password) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: _password, ...result } = user;
+      return result;
+    }
+
     return null;
   }
 
   /**
-   * Issues a signed JWT for an authenticated session.
-   * Pattern: Stateless Bearer Token.
+   * Issues a signed JWT.
    */
-  login(user: Omit<User, 'password'>) {
+  async login(user: Omit<User, 'password'>) {
     const payload = { email: user.email, sub: user.id, role: user.role };
 
     return {

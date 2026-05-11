@@ -20,13 +20,22 @@ import {
   HttpStatus,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { CurrentUser } from '@common/decorators/current-user.decorator';
+import { Roles } from '@common/decorators/roles.decorator';
 import { ErrorResponseDto } from '@common/dto/error-response.dto';
+import { RolesGuard } from '@common/guards/roles.guard';
 import { ApiResponse as AppResponse } from '@common/responses/api-response';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ChatService } from './chat.service';
 import {
   ConversationResponseDto,
@@ -36,6 +45,8 @@ import { CreateConversationDto } from './dto/create-conversation.dto';
 import { SendMessageDto } from './dto/send-message.dto';
 
 @ApiTags('Chat')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('chat')
 export class ChatController {
   constructor(private chatService: ChatService) {}
@@ -64,9 +75,10 @@ export class ChatController {
 
   /**
    * Retrieves the current user's session history.
+   * Permissions: Planner (Self-only)
    */
   @Get('conversations')
-  @ApiOperation({ summary: 'List all historical build sessions' })
+  @ApiOperation({ summary: 'List your own build sessions' })
   @ApiResponse({
     status: 200,
     description: 'List of sessions retrieved',
@@ -74,6 +86,24 @@ export class ChatController {
   })
   async getConversations(@CurrentUser('id') userId: string) {
     const result = await this.chatService.getConversations(userId);
+    return AppResponse.ok(result);
+  }
+
+  /**
+   * Admin-only: Retrieves global session history.
+   * Permissions: Admin (Global)
+   */
+  @Get('admin/conversations')
+  @Roles('admin')
+  @ApiOperation({ summary: 'ADMIN: List ALL build sessions globally' })
+  @ApiResponse({
+    status: 200,
+    description: 'Global list of sessions retrieved',
+    type: [ConversationResponseDto],
+  })
+  async getAllConversations() {
+    // Principal Grade Logic: Admins bypass the userId filter
+    const result = await this.chatService.getAllConversations();
     return AppResponse.ok(result);
   }
 

@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ErrorResponseDto } from '@common/dto/error-response.dto';
@@ -27,7 +34,11 @@ export class AuthController {
     type: ErrorResponseDto,
   })
   async login(@Body() loginDto: LoginDto) {
-    const result = await this.authService.login(loginDto);
+    const user = await this.authService.validateUser(loginDto);
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+    const result = await this.authService.login(user);
     return AppResponse.ok(result);
   }
 }

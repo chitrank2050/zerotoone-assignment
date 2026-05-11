@@ -7292,7 +7292,7 @@ snapshots:
   '@types/jsonwebtoken@9.0.10':
     dependencies:
       '@types/ms': 2.1.0
-      '@types/node': 24.12.3
+      '@types/node': 25.6.2
 
   '@types/katex@0.16.8': {}
 
