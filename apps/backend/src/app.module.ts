@@ -12,7 +12,7 @@
  *   - TaxonomyModule: Targeting signal management.
  *   - ChatModule: AI engine (Gemini) orchestration.
  */
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
 import { AuthModule } from '@modules/auth/auth.module';
 import { ChatModule } from '@modules/chat/chat.module';
@@ -23,6 +23,8 @@ import { TaxonomyModule } from '@modules/taxonomy/taxonomy.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
+import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
 @Module({
   imports: [
@@ -39,4 +41,15 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  /**
+   * Register global middleware.
+   * CorrelationIdMiddleware must run first to ensure the ID is available
+   * for any logs or errors that occur during the request lifecycle.
+   */
+  configure(consumer: MiddlewareConsumer): void {
+    consumer
+      .apply(CorrelationIdMiddleware, RequestLoggerMiddleware)
+      .forRoutes('*');
+  }
+}

@@ -22,6 +22,7 @@
     "db:deploy": "pnpm --filter backend run db:deploy",
     "db:seed": "pnpm --filter backend run db:seed",
     "// --- 🏗️ Infrastructure ---": "",
+    "docker:init": "docker compose down -v && pnpm docker:build",
     "docker:up": "docker compose up -d",
     "docker:build": "docker compose up --build -d",
     "docker:down": "docker compose down",

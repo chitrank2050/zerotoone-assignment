@@ -47,7 +47,7 @@ export const getWinstonConfig = (nodeEnv: string): WinstonModuleOptions => {
                   ? `\n\x1b[90m${JSON.stringify(metadata, null, 2)}\x1b[0m`
                   : '';
 
-                return `\x1b[90m[Meterplex]\x1b[0m ${timestamp} ${level}${contextStr} ${message}${metaStr}`;
+                return `\x1b[90m[Audience Builder]\x1b[0m ${timestamp} ${level}${contextStr} ${message}${metaStr}`;
               }),
             ),
       }),

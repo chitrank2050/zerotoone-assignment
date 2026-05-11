@@ -9,6 +9,7 @@ import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import { getWinstonConfig } from '@modules/config/logger.config';
 import { API_PREFIX, API_VERSION } from '@common/constants/app';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 /**
  * AI Audience Builder - Backend Entry Point
@@ -62,6 +63,9 @@ async function bootstrap(): Promise<void> {
       },
     }),
   );
+
+  // Global Interceptors & Filters
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   if (ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
