@@ -1,139 +1,130 @@
 <div align="center">
-  <h1>AI Audience Builder</h1>
-  <p><strong>A high-performance monorepo for building AI-driven advertising segments.</strong></p>
+  <h1>AI Audience Builder 🧠🏗️</h1>
+  <p><strong>A high-performance, principal-grade monorepo for AI-driven advertising segmentation.</strong></p>
 
   <p>
+    <img src="https://img.shields.io/badge/Posture-Principal_Grade-blueviolet?style=for-the-badge" alt="Posture">
+    <img src="https://img.shields.io/badge/Security-Tier_0_Protected-black?style=for-the-badge" alt="Security">
     <img src="https://img.shields.io/badge/Monorepo-Turborepo-6366f1?style=for-the-badge" alt="Turbo">
-    <img src="https://img.shields.io/badge/Backend-NestJS_11-E0234E?style=for-the-badge" alt="NestJS">
-    <img src="https://img.shields.io/badge/Frontend-React_19-61DAFB?style=for-the-badge" alt="React">
-    <img src="https://img.shields.io/badge/AI-Gemini_1.5-4285F4?style=for-the-badge" alt="Gemini">
-    <img src="https://img.shields.io/badge/Database-LibSQL-003B57?style=for-the-badge" alt="LibSQL">
-    <img src="https://img.shields.io/badge/Hooks-Lefthook-blueviolet?style=for-the-badge" alt="Lefthook">
+    <img src="https://img.shields.io/badge/Sync-Zero_Drift-success?style=for-the-badge" alt="Sync">
   </p>
 </div>
 
 ---
 
-## 🏛️ Architecture
+## 🏛️ Architecture & Governance
 
-This project is a modern **Turborepo monorepo** designed for maximum type safety and development velocity. It leverages a shared types package and automated build pipelines.
+The **AI Audience Builder** is a high-rigor, spec-driven monorepo designed for maximum type safety and development velocity. It leverages a **Modular Monolith** backend and a reactive **React 19** frontend, synchronized via a unified contracts package.
 
-```text
-┌─────────────────────────────────────────────────────┐
-│                  AI Audience Builder                │
-│                                                     │
-│  ┌──────────┐      ┌──────────┐      ┌──────────┐  │
-│  │ frontend │ <──> │  shared  │ <──> │  backend │  │
-│  │ (React)  │      │ (Types)  │      │ (NestJS) │  │
-│  └────┬─────┘      └──────────┘      └────┬─────┘  │
-│       │                                   │         │
-│  ┌────▼─────────────┐               ┌─────▼─────┐   │
-│  │   Vite / HMR     │               │  Prisma   │   │
-│  └──────────────────┘               └─────┬─────┘   │
-│                                           │         │
-│                                     ┌─────▼─────┐   │
-│                                     │  LibSQL   │   │
-│                                     └───────────┘   │
-└─────────────────────────────────────────────────────┘
-```
+### 🧠 System Layers
 
-### 🛠️ Tech Stack
-
-| Domain        | Technology                                                                                     | Purpose                                  |
-| :------------ | :--------------------------------------------------------------------------------------------- | :--------------------------------------- |
-| **Backend**   | [NestJS 11](https://nestjs.com/)                                                               | Modular backend architecture             |
-| **Frontend**  | [React 19](https://react.dev/) + [Vite](https://vitejs.dev/)                                   | High-performance UI + HMR                |
-| **Language**  | [TypeScript 6.0](https://www.typescriptlang.org/)                                              | Strict type-safe development             |
-| **AI Engine** | [Gemini 1.5 Flash](https://deepmind.google/technologies/gemini/)                               | Natural language audience mapping        |
-| **Database**  | [LibSQL](https://turso.tech/libsql) + [Prisma 7](https://www.prisma.io/)                       | Localized persistence with Turso adapter |
-| **Monorepo**  | [Turborepo](https://turbo.build/)                                                              | High-speed task orchestration & caching  |
-| **Quality**   | [ESLint 9](https://eslint.org/) + [Prettier](https://prettier.io/)                             | Modern flat-config linting & formatting  |
-| **Hygiene**   | [Lefthook](https://lefthook.dev/) + [git-hygiene](https://github.com/chitrank2050/git-hygiene) | Automated commit & branch standards      |
+- **Systems Grade (`apps/backend`)**: High-performance NestJS 11 orchestration, LibSQL persistence, and Gemini-AI signal extraction.
+- **UX Grade (`apps/frontend`)**: Real-time reactive dashboard with "State-as-URL Truth" and glassmorphic aesthetics.
+- **Contract Grade (`packages/shared`)**: The single source of truth for all cross-boundary DTOs and machine-readable error keys.
 
 ---
 
-## 🚀 Getting Started
+## 🤝 Shared Contract Governance
 
-**Prerequisites**: Node.js >= 24, pnpm >= 10, Docker
+This monorepo uses an in-house "Ground Truth" package: **`@audience-builder/shared`**.
 
-### ⚡ Quick Start
+> [!IMPORTANT]
+> **Zero-Drift Enforcement**: To prevent runtime errors, the Frontend and Backend do not define their own DTOs or Error Keys. They strictly import them from the shared package.
+>
+> - **Location**: `packages/shared`
+> - **Hygiene**: Whenever you modify a shared interface, you **must** run `pnpm build` from the root to synchronize the workspace.
+
+---
+
+## 🛡️ Safety & Traceability
+
+> [!IMPORTANT]
+> **The Consent Handshake**: This platform implements strict AI governance. All audience segments generated by the Gemini engine must be manually validated by a `Planner` or `Admin` before being committed to production targeting.
+> [!TIP]
+> **Zero-Drift Architecture**: Any change to the shared contracts requires a full workspace build (`pnpm build`). This ensures that your IDE and runtime never suffer from stale type definitions.
+
+### 📊 Observability
+
+Built for production-grade troubleshooting:
+
+- **Correlation IDs**: Every request is assigned a unique `x-correlation-id`, tracing the lifecycle from frontend to backend logs.
+- **Performance Logging**: Real-time request monitoring with millisecond-precision timing and status-code color coding.
+
+---
+## 🚀 Engineering Workflows
+
+This monorepo supports two distinct execution modes. Choose the one that fits your current task.
+
+### 💻 Mode A: Local Development (High Velocity)
+
+Best for active coding with Instant HMR and native debugging. Since we use **LibSQL/SQLite**, you **do not** need Docker running for this mode.
 
 ```bash
-# 1. Install dependencies
-pnpm install
+# 1. One-click bootstrap (Install + Generate + Migrate)
+pnpm setup
 
-# 2. Setup Environment
-# Copy .env.example (if available) or create a .env in apps/backend with:
-# DATABASE_URL="file:./prisma/dev.db"
-# GEMINI_API_KEY="your-key"
-# JWT_SECRET="your-secret"
-
-# 3. Synchronize Database
-pnpm db:generate
-pnpm db:migrate
-pnpm db:seed
-
-# 4. Start Development Mode
+# 2. Start all services in parallel watch mode
 pnpm dev
 ```
 
-### 📦 Docker Orchestration
+### 🐳 Mode B: Production Mirror (High Fidelity)
 
-To run the entire stack in a production-like containerized environment:
+Best for verifying deployment readiness, networking, and volume persistence in a containerized environment.
 
 ```bash
+# Build and start the entire stack in Docker
 pnpm docker:build
-```
 
----
-
-## 🛡️ Engineering Posture
-
-This project is built to **Principal/Staff Engineer** standards, prioritizing security, scalability, and developer experience (DX).
-
-- **Security-First Architecture**: Implemented stateless **JWT Authentication** with **Bcrypt** password hashing and a production-ready **Role-Based Access Control (RBAC)** guard system (Planner vs. Admin).
-- **High-Performance Tooling**: Uses **SWC** for 20x faster compilation and **Vitest** for blazing-fast unit and E2E testing, significantly reducing the developer feedback loop.
-- **Monorepo Orchestration**: Leveraging **Turborepo** with remote caching capabilities and a strict **pnpm workspace** setup for efficient dependency management.
-- **Strict Hygiene**: Enforced through **Lefthook** git hooks and **git-hygiene**, ensuring every commit meets Conventional Commit standards and passes strict quality gates (Lint/Typecheck).
-- **Principal-Grade API Docs**: Automated **Swagger/OpenAPI** documentation with Bearer Auth integration, enabling seamless API exploration and third-party integration.
-
----
-
-## 📂 Project Structure
-
-```text
-audience-builder/
-├── apps/
-│   ├── backend/         # NestJS application (Core Business Logic)
-│   └── frontend/        # React + Vite application (UI/UX)
-├── packages/
-│   └── shared/          # Shared TypeScript interfaces & constants
-├── test/                # Unified testing directory (Decoupled from src)
-├── data/                # Taxonomy & Data Dictionary (Reference only)
-├── lefthook.yml         # High-performance Git hooks
-├── turbo.json           # Turborepo task configuration
-└── package.json         # Workspace manifest & scripts
+# View real-time service logs
+pnpm docker:logs
 ```
 
 ---
 
 ## 🛠️ Operational Scripts
 
-| Command            | Scope          | Description                                       |
-| :----------------- | :------------- | :------------------------------------------------ |
-| `pnpm setup`       | Root           | **One-click bootstrap**: Install + Migrate + Seed |
-| `pnpm dev`         | Root           | Starts all apps in parallel watch mode            |
-| `pnpm build`       | Root           | Performs a full build of all packages             |
-| `pnpm test`        | Root           | Runs all unit tests via Vitest                    |
-| `pnpm test:e2e`    | Backend        | Runs full End-to-End integration suite            |
-| `pnpm lint`        | Root           | Runs strict ESLint + Markdownlint                 |
-| `pnpm format`      | Root           | Formats all code & documentation                  |
-| `pnpm db:generate` | Backend        | Regenerates Prisma client                         |
-| `pnpm db:seed`     | Backend        | Hydrates LibSQL with targeting taxonomies         |
-| `pnpm docker:up`   | Infrastructure | Starts containerized services (Postgres/Redis)    |
-| `pnpm nuke`        | Root           | Cleans node_modules and performs fresh install    |
+### 🚀 Core & Hygiene
+
+| Command            | Scope | Description                                            |
+| :----------------- | :---- | :----------------------------------------------------- |
+| `pnpm setup`       | Root  | **One-click bootstrap**: Install + Generate + Deploy   |
+| `pnpm dev`         | Root  | Starts all apps in parallel watch mode                 |
+| `pnpm build`       | Root  | Performs a full build of all packages                  |
+| `pnpm check-types` | Root  | Runs strict TypeScript validation across the workspace |
+| `pnpm lint`        | Root  | Runs ESLint + Markdownlint quality gates               |
+| `pnpm format`      | Root  | Formats all code & documentation via Prettier          |
+| `pnpm nuke`        | Root  | Cleans node_modules and performs fresh install         |
+
+### 🧪 Testing (Vitest)
+
+| Command           | Scope   | Description                              |
+| :---------------- | :------ | :--------------------------------------- |
+| `pnpm test`       | Root    | Runs all unit tests across the workspace |
+| `pnpm test:watch` | Root    | Runs tests in interactive watch mode     |
+| `pnpm test:e2e`   | Backend | Runs full End-to-End integration suite   |
+| `pnpm test:cov`   | Root    | Generates workspace-wide coverage report |
+
+### 🗄️ Database (LibSQL/Prisma)
+
+| Command            | Scope   | Description                                            |
+| :----------------- | :------ | :----------------------------------------------------- |
+| `pnpm db:generate` | Backend | Regenerates the Prisma client for all packages         |
+| `pnpm db:migrate`  | Backend | Create a new migration for schema changes              |
+| `pnpm db:deploy`   | Backend | Applies migrations non-interactively (used in `setup`) |
+| `pnpm db:seed`     | Backend | Hydrates LibSQL with targeting taxonomies              |
+| `pnpm db:reset`    | Backend | **Destructive**: Wipes and recreates the database      |
+
+### 🐳 Infrastructure (Docker)
+
+| Command             | Scope          | Description                                        |
+| :------------------ | :------------- | :------------------------------------------------- |
+| `pnpm docker:up`    | Infrastructure | Starts containerized services in background        |
+| `pnpm docker:build` | Infrastructure | Rebuilds and starts containers (Production Mirror) |
+| `pnpm docker:down`  | Infrastructure | Stops and removes all containers                   |
+| `pnpm docker:logs`  | Infrastructure | Follows real-time service logs                     |
 
 ---
 
-Developed by [Chitrank Agnihotri](https://www.chitrankagnihotri.com)
-As part of a Engineering Assessment.
+<p align="center">
+  ❤️ Developed by <b><a href="https://www.chitrankagnihotri.com">Chitrank Agnihotri</a></b>
+</p>

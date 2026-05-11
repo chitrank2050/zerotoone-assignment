@@ -1,8 +1,27 @@
 {
-  "name": "frontend",
+  "name": "@audience-builder/frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Premium AI-driven audience segmentation dashboard.",
+  "author": {
+    "name": "Chitrank agnihotri",
+    "email": "chitrank2050@gmail.com",
+    "url": "https://chitrankagnihotri.com"
+  },
+  "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chitrank2050/zerotoone-assignment",
+    "directory": "apps/frontend"
+  },
+  "keywords": [
+    "react",
+    "vite",
+    "ux-grade",
+    "audience-builder",
+    "frontend"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

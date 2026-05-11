@@ -1,10 +1,27 @@
 {
-  "name": "backend",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "@audience-builder/backend",
+  "version": "1.0.0",
+  "description": "The high-performance intelligence layer for AI audience segmentation.",
+  "author": {
+    "name": "Chitrank agnihotri",
+    "email": "chitrank2050@gmail.com",
+    "url": "https://chitrankagnihotri.com"
+  },
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chitrank2050/zerotoone-assignment",
+    "directory": "apps/backend"
+  },
+  "keywords": [
+    "nestjs",
+    "prisma",
+    "libsql",
+    "gemini-ai",
+    "audience-builder",
+    "backend"
+  ],
   "scripts": {
     "// --- 🚀 Core ---": "",
     "build": "nest build",

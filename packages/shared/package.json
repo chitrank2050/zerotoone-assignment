@@ -1,7 +1,26 @@
 {
   "name": "@audience-builder/shared",
   "version": "1.0.0",
+  "description": "Shared contracts, DTOs, and ErrorKeys for the Audience Builder ecosystem.",
+  "author": {
+    "name": "Chitrank agnihotri",
+    "email": "chitrank2050@gmail.com",
+    "url": "https://chitrankagnihotri.com"
+  },
   "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chitrank2050/zerotoone-assignment",
+    "directory": "packages/shared"
+  },
+  "keywords": [
+    "typescript",
+    "shared-contracts",
+    "dto",
+    "error-keys",
+    "monorepo-sync"
+  ],
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {

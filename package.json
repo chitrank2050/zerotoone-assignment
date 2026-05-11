@@ -31,7 +31,6 @@
     "monorepo",
     "typescript"
   ],
-
   "scripts": {
     "// --- 🚀 Core ---": "",
     "dev": "turbo run dev",
@@ -59,7 +58,8 @@
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
     "// --- ⚙️ Maintenance ---": "",
-    "setup": "pnpm install && pnpm run db:migrate && pnpm run db:generate",
+    "setup": "pnpm install --force && pnpm run db:generate && pnpm run db:deploy",
+    "db:reset": "pnpm --filter backend run db:migrate reset --force",
     "nuke": "rm -rf node_modules pnpm-lock.yaml && pnpm install"
   },
   "devDependencies": {
