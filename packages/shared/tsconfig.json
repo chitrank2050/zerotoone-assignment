@@ -3,6 +3,8 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "rootDir": "./",
+    "ignoreDeprecations": "6.0",
     "strict": true,
     "declaration": true,
     "declarationMap": true,
@@ -11,10 +13,10 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "allowJs": true,
+    "allowJs": false,
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
