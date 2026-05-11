@@ -1,3 +1,17 @@
+/**
+ * AppModule - Monorepo Root Entry Point
+ *
+ * The central orchestrator for the Audience Builder backend.
+ * Responsible for assembling the modular monolith by importing domain-specific
+ * modules and establishing global infrastructure (Configuration, Persistence).
+ *
+ * Module Graph:
+ *   - ConfigModule (Global): Environment variable management.
+ *   - PrismaModule (Global): Shared data access layer.
+ *   - AuthModule: Identity & Access Management.
+ *   - TaxonomyModule: Targeting signal management.
+ *   - ChatModule: AI engine (Gemini) orchestration.
+ */
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -9,8 +23,11 @@ import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
+    // 1. Global Infrastructure
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
+
+    // 2. Domain Modules
     AuthModule,
     TaxonomyModule,
     ChatModule,

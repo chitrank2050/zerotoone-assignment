@@ -1,87 +1,121 @@
-# AI Audience Builder 🧠📊
+<div align="center">
+  <h1>AI Audience Builder</h1>
+  <p><strong>A high-performance monorepo for building AI-driven advertising segments.</strong></p>
 
-![Audience Builder Hero](./apps/frontend/src/assets/hero.png)
+  <p>
+    <img src="https://img.shields.io/badge/Monorepo-Turborepo-6366f1?style=for-the-badge" alt="Turbo">
+    <img src="https://img.shields.io/badge/Backend-NestJS_11-E0234E?style=for-the-badge" alt="NestJS">
+    <img src="https://img.shields.io/badge/Frontend-React_19-61DAFB?style=for-the-badge" alt="React">
+    <img src="https://img.shields.io/badge/AI-Gemini_1.5-4285F4?style=for-the-badge" alt="Gemini">
+    <img src="https://img.shields.io/badge/Database-LibSQL-003B57?style=for-the-badge" alt="LibSQL">
+    <img src="https://img.shields.io/badge/Hooks-Lefthook-blueviolet?style=for-the-badge" alt="Lefthook">
+  </p>
+</div>
 
-A high-rigor, chat-based audience builder for advertising campaigns. This project follows the "Principal Grade" engineering posture, utilizing a monorepo structure with NestJS, React, and Turborepo.
+---
 
-## 🚀 Features
+## 🏛️ Architecture
 
-- **AI Agent Chat**: Natural language interpretation of audience requirements using Gemini 1.5 Flash.
-- **Taxonomy Mapping**: Automated mapping to Location and Transaction hierarchies.
-- **Monorepo Architecture**: Shared types and optimized build pipelines via Turborepo.
-- **Premium UI**: Dark-mode, glassmorphic design system built with Vanilla CSS.
-- **Persistence**: SQLite database (via Prisma) for conversation history and user roles.
+This project is a modern **Turborepo monorepo** designed for maximum type safety and development velocity. It leverages a shared types package and automated build pipelines.
 
-## 🛠️ Tech Stack
+```text
+┌─────────────────────────────────────────────────────┐
+│                  AI Audience Builder                │
+│                                                     │
+│  ┌──────────┐      ┌──────────┐      ┌──────────┐  │
+│  │ frontend │ <──> │  shared  │ <──> │  backend │  │
+│  │ (React)  │      │ (Types)  │      │ (NestJS) │  │
+│  └────┬─────┘      └──────────┘      └────┬─────┘  │
+│       │                                   │         │
+│  ┌────▼─────────────┐               ┌─────▼─────┐   │
+│  │   Vite / HMR     │               │  Prisma   │   │
+│  └──────────────────┘               └─────┬─────┘   │
+│                                           │         │
+│                                     ┌─────▼─────┐   │
+│                                     │  LibSQL   │   │
+│                                     └───────────┘   │
+└─────────────────────────────────────────────────────┘
+```
 
-- **Frontend**: React, Vite, Lucide Icons, Vanilla CSS.
-- **Backend**: NestJS, Prisma (SQLite), Google Gemini AI.
-- **Orchestration**: Turborepo, pnpm workspaces.
-- **Rigor**: Posture-Core implementation (Atomic change, Border validation).
+### 🛠️ Tech Stack
 
-## 📦 Setup & Installation
+| Domain        | Technology                                                                                     | Purpose                                  |
+| :------------ | :--------------------------------------------------------------------------------------------- | :--------------------------------------- |
+| **Backend**   | [NestJS 11](https://nestjs.com/)                                                               | Modular backend architecture             |
+| **Frontend**  | [React 19](https://react.dev/) + [Vite](https://vitejs.dev/)                                   | High-performance UI + HMR                |
+| **Language**  | [TypeScript 6.0](https://www.typescriptlang.org/)                                              | Strict type-safe development             |
+| **AI Engine** | [Gemini 1.5 Flash](https://deepmind.google/technologies/gemini/)                               | Natural language audience mapping        |
+| **Database**  | [LibSQL](https://turso.tech/libsql) + [Prisma 7](https://www.prisma.io/)                       | Localized persistence with Turso adapter |
+| **Monorepo**  | [Turborepo](https://turbo.build/)                                                              | High-speed task orchestration & caching  |
+| **Quality**   | [ESLint 9](https://eslint.org/) + [Prettier](https://prettier.io/)                             | Modern flat-config linting & formatting  |
+| **Hygiene**   | [Lefthook](https://lefthook.dev/) + [git-hygiene](https://github.com/chitrank2050/git-hygiene) | Automated commit & branch standards      |
 
-### Prerequisites
+---
 
-- Node.js >= 24
-- pnpm >= 9
-- Gemini API Key
+## 🚀 Getting Started
 
-### 1. Clone & Install
+**Prerequisites**: Node.js >= 24, pnpm >= 10, Docker
+
+### ⚡ Quick Start
 
 ```bash
+# 1. Install dependencies
 pnpm install
-```
 
-### 2. Environment Setup
+# 2. Setup Environment
+# Copy .env.example (if available) or create a .env in apps/backend with:
+# DATABASE_URL="file:./dev.db"
+# GEMINI_API_KEY="your-key"
+# JWT_SECRET="your-secret"
 
-Create `apps/backend/.env`:
+# 3. Synchronize Database
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
 
-```env
-DATABASE_URL="file:./dev.db"
-JWT_SECRET="your-secret"
-GEMINI_API_KEY="your-key"
-PORT=3000
-```
-
-### 3. Database Initialization
-
-In the root:
-
-```bash
-pnpm db:deploy
-```
-
-### 4. Run Development
-
-In the root:
-
-```bash
+# 4. Start Development Mode
 pnpm dev
 ```
 
-### 🐳 Run with Docker
+### 📦 Docker Orchestration
 
-If you prefer a containerized environment (from the root):
+To run the entire stack in a production-like containerized environment:
 
 ```bash
 pnpm docker:build
 ```
 
-This will start the backend on `localhost:3000` and the frontend on `localhost:80`.
+---
 
-## 📐 Design Decisions
+## 📂 Project Structure
 
-1.  **Monorepo**: Chosen to ensure type safety across the stack. Shared interfaces in `packages/shared` prevent runtime mismatches.
-2.  **SQLite**: Selected for the take-home task to ensure zero-config deployment and portability for evaluation.
-3.  **Vanilla CSS**: Used for maximum flexibility and performance, demonstrating a custom design system without library bloat.
-4.  **AI Prompting**: Implemented a "Context-Aware System Instruction" that injects the taxonomy directly into the LLM's short-term memory for high-precision signal mapping.
-
-## 👥 Roles
-
-- **Admin**: Full access to all builds and configurations.
-- **Planner**: Access to chat and audience building.
+```text
+audience-builder/
+├── apps/
+│   ├── backend/         # NestJS application (Core Business Logic)
+│   └── frontend/        # React + Vite application (UI/UX)
+├── packages/
+│   └── shared/          # Shared TypeScript interfaces & constants
+├── data/                # Taxonomy & Data Dictionary (Reference only)
+├── lefthook.yml         # High-performance Git hooks
+├── turbo.json           # Turborepo task configuration
+└── package.json         # Workspace manifest & scripts
+```
 
 ---
 
-❤️ Developed with Principal Rigor.
+## 🛠️ Operational Scripts
+
+| Command             | Scope   | Description                            |
+| :------------------ | :------ | :------------------------------------- |
+| `pnpm dev`          | Root    | Starts all apps in parallel watch mode |
+| `pnpm build`        | Root    | Performs a full build of all packages  |
+| `pnpm lint`         | Root    | Runs strict ESLint + Markdownlint      |
+| `pnpm format`       | Root    | Formats all code & documentation       |
+| `pnpm db:generate`  | Backend | Regenerates Prisma client              |
+| `pnpm db:seed`      | Backend | Hydrates LibSQL with taxonomies        |
+| `pnpm docker:build` | Root    | Orchestrates full containerized build  |
+
+---
+
+❤️ Developed by [Antigravity](https://github.com/google-deepmind) 🧠📊🚀

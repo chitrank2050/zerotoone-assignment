@@ -4,8 +4,18 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
+/**
+ * Frontend ESLint Configuration
+ * 
+ * This configuration is anchored to the frontend workspace root to resolve
+ * monorepo ambiguity. It uses the TypeScript-ESLint Project Service for
+ * high-performance type-safe linting.
+ */
 export default tseslint.config(
-  { ignores: ['dist', 'eslint.config.mjs'] },
+  // 1. Global Ignores
+  { ignores: ['dist', 'eslint.config.mjs', 'eslint.config.js', 'vite.config.ts'] },
+  
+  // 2. Base Configuration
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -14,7 +24,10 @@ export default tseslint.config(
       globals: globals.browser,
       parserOptions: {
         projectService: true,
+        // Explicitly anchor to this directory to prevent monorepo candidates collision
         tsconfigRootDir: import.meta.dirname,
+        // Safety fallback for files not explicitly in a tsconfig include
+        allowDefaultProject: true,
       },
     },
     plugins: {

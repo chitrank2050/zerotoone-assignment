@@ -1,13 +1,23 @@
+/**
+ * AuthService - Identity & Access Orchestrator
+ *
+ * Handles the authentication lifecycle and secure credential validation.
+ * Responsible for issuing JWTs and establishing user context for the platform.
+ *
+ * Standards:
+ *   - Auth Strategy: JWT (Stateless)
+ *   - Payload: sub (ID), email, and role
+ *   - Validation: Explicit password matching (Bcrypt-ready)
+ *
+ * Note: Placeholder password comparison used for local development.
+ * Production readiness requires migration to Bcrypt.
+ */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { User } from '@prisma/client';
 
-/**
- * AuthService handles the identity and access management for the platform.
- * It provides methods for user validation (authentication) and JWT issuance.
- */
 @Injectable()
 export class AuthService {
   constructor(
@@ -16,11 +26,8 @@ export class AuthService {
   ) {}
 
   /**
-   * Validates a user's credentials.
-   * Compares the provided email and password against the database records.
-   *
-   * @param loginDto Object containing email and raw password.
-   * @returns The user object (excluding password) if valid, otherwise null.
+   * Validates user credentials against the LibSQL persistence layer.
+   * Logic: Finds user by email -> verifies password -> returns user without secret.
    */
   async validateUser(
     loginDto: LoginDto,
@@ -29,9 +36,7 @@ export class AuthService {
       where: { email: loginDto.email },
     });
 
-    // In a production environment, this would use bcrypt.compare
     if (user && user.password === loginDto.password) {
-      // Strip password before returning the user object to the controller
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
       return result;
@@ -40,10 +45,8 @@ export class AuthService {
   }
 
   /**
-   * Generates a signed JWT for an authenticated user.
-   *
-   * @param user The user object returned from validateUser.
-   * @returns An object containing the access_token and a public user profile.
+   * Issues a signed JWT for an authenticated session.
+   * Pattern: Stateless Bearer Token.
    */
   login(user: Omit<User, 'password'>) {
     const payload = { email: user.email, sub: user.id, role: user.role };

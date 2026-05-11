@@ -1,3 +1,20 @@
+/**
+ * AudienceBuilder Dashboard - Main Interface
+ *
+ * High-performance React 19 application orchestrating real-time AI audience builds.
+ *
+ * Architecture:
+ *   - Reactive State: Manages chat threads, estimation counts, and active signals.
+ *   - AI Loop: Optimistic UI updates -> Gemini mapping -> Signal hydration.
+ *   - Design System: Custom glassmorphism-based UI tailored for the Meterplex aesthetic.
+ *
+ * Components:
+ *   - Sidebar: Session management & navigation.
+ *   - Chat: Real-time natural language interface.
+ *   - Estimation: Dynamic audience reachability dashboard.
+ *
+ * State: React Hooks (useState, useEffect, useRef).
+ */
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -14,29 +31,21 @@ import { Conversation, Message } from '@audience-builder/shared';
 
 import './App.css';
 
-/**
- * Global Configuration
- */
 const API_BASE = 'http://localhost:3000';
 
-/**
- * Main Audience Builder Dashboard Component.
- * Orchestrates real-time chat with Gemini AI, audience estimation,
- * and session management for advertising planners.
- */
 function App() {
-  // --- State Management ---
+  // --- Global State ---
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Refs for UI orchestration
+  // Refs for scrolling and DOM interaction
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   /**
-   * Initial Data Fetch: Load all existing conversations for the session sidebar.
+   * Lifecycle: Bootstraps the application by loading the user's build history.
    */
   useEffect(() => {
     const fetchConversations = async () => {
@@ -45,14 +54,14 @@ function App() {
         const json = await res.json();
         if (json.success) setConversations(json.data);
       } catch (error) {
-        console.error('Failed to load sessions:', error);
+        console.error('[Hydration Error] Failed to load build history:', error);
       }
     };
     fetchConversations();
   }, []);
 
   /**
-   * Context Switch: Fetch message history whenever the active conversation changes.
+   * Lifecycle: Synchronizes the chat thread whenever a session is selected.
    */
   useEffect(() => {
     if (activeConvId) {
@@ -64,7 +73,10 @@ function App() {
           const json = await res.json();
           if (json.success) setMessages(json.data);
         } catch (error) {
-          console.error('Failed to load message history:', error);
+          console.error(
+            '[Hydration Error] Failed to load message thread:',
+            error,
+          );
         }
       };
       fetchMessages(activeConvId);
@@ -72,7 +84,8 @@ function App() {
   }, [activeConvId]);
 
   /**
-   * Action: Creates a new audience building session.
+   * Action: Spawns a new audience build session.
+   * Persistence: Instantly creates a record in LibSQL and selects it as active.
    */
   const createConversation = async () => {
     try {
@@ -87,18 +100,17 @@ function App() {
         setActiveConvId(json.data.id);
       }
     } catch (error) {
-      console.error('Failed to create new session:', error);
+      console.error('[Creation Error] Failed to initialize build:', error);
     }
   };
 
   /**
-   * Action: Sends a natural language audience description to the AI engine.
-   * Manages optimistic UI updates and loading states.
+   * Action: Submits audience requirements to the AI engine.
+   * Pattern: Optimistic Update -> AI Processing -> Signal Feedback.
    */
   const handleSend = async () => {
     if (!input.trim() || !activeConvId) return;
 
-    // Optimistic UI Update: Show user message immediately
     const userMsg = { role: 'user' as const, content: input };
     setMessages([...messages, userMsg]);
     setInput('');
@@ -116,21 +128,20 @@ function App() {
       const json = await res.json();
 
       if (json.success) {
-        // Append AI response to the thread
         setMessages((prev) => [
           ...prev,
           { role: 'agent' as const, content: json.data },
         ]);
       }
     } catch (error) {
-      console.error('AI Interaction Error:', error);
+      console.error('[AI Error] Message propagation failed:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
   /**
-   * UI Orchestration: Auto-scroll to the bottom of the chat on new messages.
+   * Layout Logic: Auto-scroll anchor for conversational continuity.
    */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -179,7 +190,7 @@ function App() {
         </div>
       </aside>
 
-      {/* ─── Main Chat Panel: AI Interaction ─── */}
+      {/* ─── Main Chat Panel: AI Interaction Thread ─── */}
       <main className="chat-panel">
         <header className="chat-header">
           <h2>
@@ -242,7 +253,7 @@ function App() {
         </footer>
       </main>
 
-      {/* ─── Right Panel: Signals & Real-time Estimation ─── */}
+      {/* ─── Control Panel: Signal Approval & Reachability ─── */}
       <aside className="control-panel glass">
         <section className="estimation">
           <h3>Audience Estimate</h3>

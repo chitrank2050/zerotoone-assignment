@@ -1,20 +1,25 @@
+/**
+ * TaxonomyService - Master Signal Provider
+ *
+ * Manages the retrieval and filtering of the audience targeting signal catalog.
+ * Acts as the source of truth for both the AI engine (context injection)
+ * and the frontend (manual signal browsing/selection).
+ *
+ * Domains:
+ *   - Locations: Geographical hierarchies (Country > State > City).
+ *   - Transactions: Category-based spending signals (e.g., Luxury Retail, Grocery).
+ *
+ * Performance: Utilizes LibSQL 'contains' queries for performant path-based search.
+ */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-/**
- * TaxonomyService manages the retrieval and searching of hierarchical targeting signals.
- * It provides the source of truth for location-based and transaction-based signals
- * used by the AI engine and the frontend selection UI.
- */
 @Injectable()
 export class TaxonomyService {
   constructor(private prisma: PrismaService) {}
 
   /**
-   * Searches the location taxonomy based on a natural language query.
-   * Matches against both the node name and the full hierarchical path.
-   *
-   * @param query Search term (e.g., "California" or "USA > West")
+   * Performs a fuzzy search across the geographical signal catalog.
    */
   async searchLocations(query: string) {
     return this.prisma.locationTaxonomy.findMany({
@@ -25,9 +30,7 @@ export class TaxonomyService {
   }
 
   /**
-   * Searches the transaction taxonomy (spending categories).
-   *
-   * @param query Search term (e.g., "Grocery" or "Luxury Retail")
+   * Performs a fuzzy search across the spending/transaction signal catalog.
    */
   async searchTransactions(query: string) {
     return this.prisma.transactionTaxonomy.findMany({
@@ -38,16 +41,14 @@ export class TaxonomyService {
   }
 
   /**
-   * Fetches the entire location taxonomy tree.
-   * Typically used for providing context to AI models.
+   * Retrieves the full location hierarchy for AI context injection.
    */
   async getAllLocations() {
     return this.prisma.locationTaxonomy.findMany();
   }
 
   /**
-   * Fetches the entire transaction taxonomy tree.
-   * Typically used for providing context to AI models.
+   * Retrieves the full transaction hierarchy for AI context injection.
    */
   async getAllTransactions() {
     return this.prisma.transactionTaxonomy.findMany();
