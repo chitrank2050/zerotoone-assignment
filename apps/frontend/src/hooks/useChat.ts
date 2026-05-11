@@ -26,12 +26,11 @@ export const useChat = (conversationId?: string) => {
       // 1. Initialize session if it's the first message
       if (!currentId) {
         try {
-          const conv = await apiClient.post<{ id: string }>(
-            '/chat/conversations',
-            {
-              title: content.substring(0, 30) + '...',
-            },
-          );
+          // The apiClient interceptor returns data.data, so we cast to the inner type
+          const conv = await (apiClient.post('/chat/conversations', {
+            title: content.substring(0, 30) + '...',
+          }) as unknown as Promise<{ id: string }>);
+
           currentId = conv.id;
           setActiveId(conv.id);
         } catch (err: any) {
@@ -54,10 +53,13 @@ export const useChat = (conversationId?: string) => {
 
       try {
         // 3. Network Request to synchronized route
-        const response = await apiClient.post<
-          any,
-          { messages: Message[]; signals: Signal[] }
-        >(`/chat/conversations/${currentId}/messages`, { text: content });
+        // Backend ChatController expects { text: string }
+        const response = await (apiClient.post(
+          `/chat/conversations/${currentId}/messages`,
+          {
+            text: content,
+          },
+        ) as unknown as Promise<{ messages: Message[]; signals: Signal[] }>);
 
         // 4. Sync State (Messages and Signals)
         setMessages(response.messages);

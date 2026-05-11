@@ -12,7 +12,7 @@ import {
   User as UserIcon,
 } from 'lucide-react';
 
-import { SignalCard } from './components/SignalCard';
+import SignalCard from './components/SignalCard';
 import { useChat } from './hooks/useChat';
 
 /**
@@ -60,7 +60,7 @@ const App: React.FC = () => {
 
         <div className="mt-auto pt-6 border-t border-border-glass">
           <div className="flex items-center gap-3 px-2 py-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-primary to-brand-secondary p-[1px]">
+            <div className="w-8 h-8 rounded-full bg-linear-to-tr from-brand-primary to-brand-secondary p-px">
               <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
                 <UserIcon className="w-4 h-4 text-brand-primary" />
               </div>
@@ -236,7 +236,7 @@ const App: React.FC = () => {
         <div className="p-6 bg-brand-primary/5 border-t border-border-glass backdrop-blur-2xl">
           <div className="flex justify-between items-end mb-6">
             <div>
-              <p className="text-[10px] uppercase font-black tracking-[0.1em] opacity-40 mb-1">
+              <p className="text-[10px] uppercase font-black tracking-widest opacity-40 mb-1">
                 Total Estimates
               </p>
               <h4 className="text-4xl font-black tabular-nums tracking-tighter">
@@ -244,7 +244,7 @@ const App: React.FC = () => {
               </h4>
             </div>
             <div className="text-right">
-              <p className="text-[10px] uppercase font-black tracking-[0.1em] opacity-40 mb-1">
+              <p className="text-[10px] uppercase font-black tracking-widest opacity-40 mb-1">
                 Sync
               </p>
               <p className="text-xs font-bold text-brand-primary">LATEST</p>

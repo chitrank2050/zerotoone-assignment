@@ -84,6 +84,7 @@ export interface ApiResponse<T> {
   success: boolean;
   data: T;
   error?: string;
+  metadata?: Record<string, unknown>;
   timestamp: string;
 }
 
