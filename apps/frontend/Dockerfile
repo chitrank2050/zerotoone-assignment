@@ -1,17 +1,30 @@
-# --- Build Stage ---
-FROM node:24-slim AS build
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-COPY . /app
+# --- Stage 1: Build ---
+FROM node:20-slim AS builder
 WORKDIR /app
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpm run build --filter frontend
+# Install pnpm
+RUN npm install -g pnpm
 
-# --- Production Stage ---
-FROM nginx:stable-alpine AS deploy
-COPY --from=build /app/apps/frontend/dist /usr/share/nginx/html
-# Copy custom nginx config if needed
+# Copy monorepo essentials
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY packages/shared/package.json ./packages/shared/
+COPY apps/frontend/package.json ./apps/frontend/
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY packages/shared ./packages/shared
+COPY apps/frontend ./apps/frontend
+
+# Build shared package then frontend
+RUN pnpm --filter @audience-builder/shared build
+RUN pnpm --filter @audience-builder/frontend build
+
+# --- Stage 2: Serve ---
+FROM nginx:alpine
+COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
+COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

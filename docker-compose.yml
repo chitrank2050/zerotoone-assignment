@@ -1,24 +1,32 @@
+version: '3.8'
+
 services:
+  # --- Backend Intelligence Layer ---
   backend:
-    container_name: audience-builder-backend
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
     ports:
-      - '3000:3000'
-    env_file:
-      - apps/backend/.env
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/prod.db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     volumes:
-      - ./apps/backend/prisma:/app/apps/backend/prisma
-    restart: always
+      - audience-data:/app/data
+    restart: unless-stopped
 
+  # --- Frontend UX Layer ---
   frontend:
-    container_name: audience-builder-frontend
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
     ports:
-      - '80:80'
+      - "80:80"
     depends_on:
       - backend
-    restart: always
+    restart: unless-stopped
+
+volumes:
+  audience-data:
+    driver: local
