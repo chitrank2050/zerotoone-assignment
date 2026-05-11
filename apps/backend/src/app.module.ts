@@ -20,8 +20,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { TaxonomyModule } from './taxonomy/taxonomy.module';
 import { ChatModule } from './chat/chat.module';
-import { TerminusModule } from '@nestjs/terminus';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { HealthModule } from './modules/health';
 
 @Module({
   imports: [
@@ -34,7 +34,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
       },
     ]),
     PrismaModule,
-    TerminusModule,
+    HealthModule,
 
     // 2. Domain Modules
     AuthModule,

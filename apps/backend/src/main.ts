@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
 import { AppModule } from './app.module';
@@ -46,7 +47,22 @@ async function bootstrap() {
     }),
   );
 
-  // 4. Start the server on the configured port
+  // 4. Initialize Swagger Documentation (Principal-Grade Observability)
+  const config = new DocumentBuilder()
+    .setTitle('AI Audience Builder API')
+    .setDescription(
+      'The core API for orchestrating AI-driven audience segmentation.',
+    )
+    .setVersion('1.0')
+    .addTag('Health', 'Infrastructure monitoring')
+    .addTag('Chat', 'AI conversation orchestration')
+    .addTag('Taxonomy', 'Audience targeting signals')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+
+  // 5. Start the server on the configured port
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
 
