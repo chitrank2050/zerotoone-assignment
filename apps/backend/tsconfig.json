@@ -2,8 +2,13 @@
   "compilerOptions": {
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "ignoreDeprecations": "6.0",
+    "baseUrl": "./",
     "paths": {
-      "@data/*": ["./data/*"]
+      "@common/*": ["src/common/*"],
+      "@modules/*": ["src/modules/*"],
+      "@prisma/*": ["src/modules/prisma/*"],
+      "@data/*": ["data/*"]
     },
     "types": ["node", "jest"],
     "resolvePackageJsonExports": true,

@@ -12,7 +12,7 @@
  */
 import { Controller, Get, Query } from '@nestjs/common';
 import { TaxonomyService } from './taxonomy.service';
-import { ApiResponse } from '../common/responses/api-response';
+import { ApiResponse } from '@common/responses/api-response';
 
 @Controller('taxonomy')
 export class TaxonomyController {
