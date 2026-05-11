@@ -10,7 +10,7 @@
       "@prisma/*": ["./prisma/*"],
       "@data/*": ["./data/*"]
     },
-    "types": ["node", "jest"],
+    "types": ["node", "vitest/globals"],
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
     "isolatedModules": true,

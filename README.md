@@ -87,6 +87,18 @@ pnpm docker:build
 
 ---
 
+## 🛡️ Engineering Posture
+
+This project is built to **Principal/Staff Engineer** standards, prioritizing security, scalability, and developer experience (DX).
+
+- **Security-First Architecture**: Implemented stateless **JWT Authentication** with **Bcrypt** password hashing and a production-ready **Role-Based Access Control (RBAC)** guard system (Planner vs. Admin).
+- **High-Performance Tooling**: Uses **SWC** for 20x faster compilation and **Vitest** for blazing-fast unit and E2E testing, significantly reducing the developer feedback loop.
+- **Monorepo Orchestration**: Leveraging **Turborepo** with remote caching capabilities and a strict **pnpm workspace** setup for efficient dependency management.
+- **Strict Hygiene**: Enforced through **Lefthook** git hooks and **git-hygiene**, ensuring every commit meets Conventional Commit standards and passes strict quality gates (Lint/Typecheck).
+- **Principal-Grade API Docs**: Automated **Swagger/OpenAPI** documentation with Bearer Auth integration, enabling seamless API exploration and third-party integration.
+
+---
+
 ## 📂 Project Structure
 
 ```text
@@ -96,6 +108,7 @@ audience-builder/
 │   └── frontend/        # React + Vite application (UI/UX)
 ├── packages/
 │   └── shared/          # Shared TypeScript interfaces & constants
+├── test/                # Unified testing directory (Decoupled from src)
 ├── data/                # Taxonomy & Data Dictionary (Reference only)
 ├── lefthook.yml         # High-performance Git hooks
 ├── turbo.json           # Turborepo task configuration
@@ -106,15 +119,19 @@ audience-builder/
 
 ## 🛠️ Operational Scripts
 
-| Command             | Scope   | Description                            |
-| :------------------ | :------ | :------------------------------------- |
-| `pnpm dev`          | Root    | Starts all apps in parallel watch mode |
-| `pnpm build`        | Root    | Performs a full build of all packages  |
-| `pnpm lint`         | Root    | Runs strict ESLint + Markdownlint      |
-| `pnpm format`       | Root    | Formats all code & documentation       |
-| `pnpm db:generate`  | Backend | Regenerates Prisma client              |
-| `pnpm db:seed`      | Backend | Hydrates LibSQL with taxonomies        |
-| `pnpm docker:build` | Root    | Orchestrates full containerized build  |
+| Command             | Scope    | Description                                      |
+| :------------------ | :------- | :----------------------------------------------- |
+| `pnpm setup`        | Root     | **One-click bootstrap**: Install + Migrate + Seed |
+| `pnpm dev`          | Root     | Starts all apps in parallel watch mode           |
+| `pnpm build`        | Root     | Performs a full build of all packages            |
+| `pnpm test`         | Root     | Runs all unit tests via Vitest                   |
+| `pnpm test:e2e`     | Backend  | Runs full End-to-End integration suite           |
+| `pnpm lint`         | Root     | Runs strict ESLint + Markdownlint                |
+| `pnpm format`       | Root     | Formats all code & documentation                 |
+| `pnpm db:generate`  | Backend  | Regenerates Prisma client                        |
+| `pnpm db:seed`      | Backend  | Hydrates LibSQL with targeting taxonomies        |
+| `pnpm docker:up`    | Infrastructure | Starts containerized services (Postgres/Redis)   |
+| `pnpm nuke`         | Root     | Cleans node_modules and performs fresh install   |
 
 ---
 
