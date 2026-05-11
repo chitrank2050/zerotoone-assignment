@@ -48,23 +48,8 @@
   },
   "packageManager": "pnpm@10.33.2",
   "git-hygiene": {
-    "types": [
-      "feat",
-      "fix",
-      "chore",
-      "docs",
-      "style",
-      "refactor",
-      "perf",
-      "test",
-      "build",
-      "ci",
-      "revert"
-    ],
     "ignoreBranches": [
-      "main",
-      "master",
-      "gh-pages"
+      "main"
     ]
   }
 }
