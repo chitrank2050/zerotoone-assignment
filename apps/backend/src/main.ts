@@ -1,11 +1,14 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import compression from 'compression';
 import helmet from 'helmet';
+import { WinstonModule } from 'nest-winston';
 
 import { AppModule } from './app.module';
+import { getWinstonConfig } from '@modules/config/logger.config';
+import { API_PREFIX, API_VERSION } from '@common/constants/app';
 
 /**
  * AI Audience Builder - Backend Entry Point
@@ -13,56 +16,84 @@ import { AppModule } from './app.module';
  * Orchestrates the bootstrapping of the NestJS application, configuring
  * global security, validation, and connectivity settings.
  */
-async function bootstrap() {
-  // 1. Initialize NestJS Application with the root AppModule
-  const app = await NestFactory.create(AppModule);
+async function bootstrap(): Promise<void> {
+  const ENV = process.env.NODE_ENV ?? 'development';
 
-  // 2. Global Security & Performance Middleware
-  app.use(helmet());
-  app.use(compression());
-
-  // 3. Global Security: Enable CORS for Frontend communication
-  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') ?? [
-    'http://localhost:3000',
-    'http://localhost:5173',
-  ];
-
-  app.enableCors({
-    origin: allowedOrigins,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
+  //  Initialize NestJS Application with the root AppModule Initialize NestJS Application with the root AppModule
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(getWinstonConfig(ENV)),
   });
 
-  // Enable Graceful Shutdown hooks
-  app.enableShutdownHooks();
-
-  /**
-   * 3. Principal-Grade Data Integrity
-   * We enforce strict validation pipes at the API boundary to ensure that
-   * only well-formed DTOs are processed by the business logic.
-   */
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true, // Strip non-whitelisted properties from DTOs
-      forbidNonWhitelisted: true, // Throw error if non-whitelisted props are sent
-      transform: true, // Automatically transform payloads to DTO instances
+  app.use(
+    helmet({
+      // Scalar loads JS/CSS from CDN - default CSP blocks it.
+      // Disabled in dev (where Scalar runs), enabled in prod (where it doesn't).
+      contentSecurityPolicy: ENV === 'production',
     }),
   );
 
-  // 4. Initialize Swagger Documentation (Principal-Grade Observability)
-  const config = new DocumentBuilder()
-    .setTitle('AI Audience Builder API')
-    .setDescription(
-      'The core API for orchestrating AI-driven audience segmentation.',
-    )
-    .setVersion('1.0')
-    .addTag('Health', 'Infrastructure monitoring')
-    .addTag('Chat', 'AI conversation orchestration')
-    .addTag('Taxonomy', 'Audience targeting signals')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  app.use(compression());
+
+  app.enableCors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') ?? [
+      'http://localhost:3000',
+      'http://localhost:5173',
+    ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
+  });
+
+  app.setGlobalPrefix(API_PREFIX, {
+    exclude: ['health'],
+  });
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: API_VERSION,
+  });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  );
+
+  if (ENV !== 'production') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('AI Audience Builder API')
+      .setDescription(
+        'The core API for orchestrating AI-driven audience segmentation.',
+      )
+      .setVersion(API_VERSION)
+      .addBearerAuth()
+      .build();
+
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+
+    // Raw OpenAPI JSON - importable by Bruno, Postman, SDK generators.
+    SwaggerModule.setup(`${API_PREFIX}/swagger`, app, document, {
+      jsonDocumentUrl: `${API_PREFIX}/docs-json`,
+    });
+
+    // Scalar UI - modern interactive API docs replacing Swagger UI.
+    // Dynamic import avoids CJS/ESM compatibility issues.
+    const { apiReference } = await import('@scalar/nestjs-api-reference');
+    app.use(
+      `/${API_PREFIX}/docs`,
+      apiReference({
+        content: document,
+        theme: 'purple',
+      }),
+    );
+  }
+
+  // Enable Graceful Shutdown hooks
+  app.enableShutdownHooks();
 
   // 5. Start the server on the configured port
   const port = process.env.PORT ?? 3000;
@@ -71,8 +102,19 @@ async function bootstrap() {
   console.log(
     `[🚀] AI Audience Builder Backend is live at: http://localhost:${port}`,
   );
-  console.log(`[🧪] Environment: ${process.env.NODE_ENV || 'development'}`);
+
+  console.log(`
+  ┌──────────────────────────────────────────────┐
+  │  AI Audience Builder API running             │
+  │  Local:   http://localhost:${String(port).padEnd(4)}              │
+  │  Docs:    http://localhost:${String(port).padEnd(4)}/api/docs     │
+  │  Health:  http://localhost:${String(port).padEnd(4)}/health       │
+  │  Mode:    ${String(ENV ?? 'development').padEnd(35)}│
+  └──────────────────────────────────────────────┘
+  `);
 }
 
-// Fire and forget the bootstrap sequence
-void bootstrap();
+void bootstrap().catch((err) => {
+  console.error('Failed to start application:', err);
+  process.exit(1);
+});

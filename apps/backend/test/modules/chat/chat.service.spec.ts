@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ChatService } from './chat.service';
+import { ChatService } from '@modules/chat/chat.service';
 
 describe('ChatService', () => {
   let service: ChatService;
