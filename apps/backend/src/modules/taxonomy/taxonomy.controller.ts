@@ -18,8 +18,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { ApiResponse as AppResponse } from '@common/responses/api-response';
-
 import { SearchTaxonomyDto } from './dto/search-taxonomy.dto';
 import { TaxonomyResponseDto } from './dto/taxonomy-response.dto';
 import { TaxonomyService } from './taxonomy.service';
@@ -43,10 +41,9 @@ export class TaxonomyController {
     type: [TaxonomyResponseDto],
   })
   async getLocations(@Query() dto: SearchTaxonomyDto) {
-    const result = dto.q
-      ? await this.taxonomyService.searchLocations(dto.q)
-      : await this.taxonomyService.getAllLocations();
-    return AppResponse.ok(result);
+    return dto.q
+      ? this.taxonomyService.searchLocations(dto.q)
+      : this.taxonomyService.getAllLocations();
   }
 
   /**
@@ -60,9 +57,8 @@ export class TaxonomyController {
     type: [TaxonomyResponseDto],
   })
   async getTransactions(@Query() dto: SearchTaxonomyDto) {
-    const result = dto.q
-      ? await this.taxonomyService.searchTransactions(dto.q)
-      : await this.taxonomyService.getAllTransactions();
-    return AppResponse.ok(result);
+    return dto.q
+      ? this.taxonomyService.searchTransactions(dto.q)
+      : this.taxonomyService.getAllTransactions();
   }
 }

@@ -9,7 +9,6 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ErrorResponseDto } from '@common/dto/error-response.dto';
-import { ApiResponse as AppResponse } from '@common/responses/api-response';
 
 import { AuthService } from './auth.service';
 import { LoginResponseDto } from './dto/login-response.dto';
@@ -38,7 +37,6 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
-    const result = await this.authService.login(user);
-    return AppResponse.ok(result);
+    return this.authService.login(user);
   }
 }

@@ -33,7 +33,6 @@ import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { Roles } from '@common/decorators/roles.decorator';
 import { ErrorResponseDto } from '@common/dto/error-response.dto';
 import { RolesGuard } from '@common/guards/roles.guard';
-import { ApiResponse as AppResponse } from '@common/responses/api-response';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ChatService } from './chat.service';
@@ -66,11 +65,10 @@ export class ChatController {
     @CurrentUser('id') userId: string,
     @Body() dto: CreateConversationDto,
   ) {
-    const result = await this.chatService.createConversation(
+    return this.chatService.createConversation(
       userId,
       dto.title || 'New Build',
     );
-    return AppResponse.ok(result);
   }
 
   /**
@@ -85,8 +83,7 @@ export class ChatController {
     type: [ConversationResponseDto],
   })
   async getConversations(@CurrentUser('id') userId: string) {
-    const result = await this.chatService.getConversations(userId);
-    return AppResponse.ok(result);
+    return this.chatService.getConversations(userId);
   }
 
   /**
@@ -103,8 +100,7 @@ export class ChatController {
   })
   async getAllConversations() {
     // Principal Grade Logic: Admins bypass the userId filter
-    const result = await this.chatService.getAllConversations();
-    return AppResponse.ok(result);
+    return this.chatService.getAllConversations();
   }
 
   /**
@@ -128,8 +124,7 @@ export class ChatController {
     @Param('id') id: string,
     @Body() dto: SendMessageDto,
   ) {
-    const result = await this.chatService.sendMessage(userId, id, dto.text);
-    return AppResponse.ok(result);
+    return this.chatService.sendMessage(userId, id, dto.text);
   }
 
   /**
@@ -143,7 +138,6 @@ export class ChatController {
     type: [MessageResponseDto],
   })
   async getMessages(@Param('id') id: string) {
-    const result = await this.chatService.getMessages(id);
-    return AppResponse.ok(result);
+    return this.chatService.getMessages(id);
   }
 }

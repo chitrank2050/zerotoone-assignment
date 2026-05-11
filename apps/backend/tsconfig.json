@@ -3,7 +3,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "baseUrl": "./",
-    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@common/*": ["./src/common/*"],
       "@modules/*": ["./src/modules/*"],

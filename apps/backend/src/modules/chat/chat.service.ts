@@ -16,8 +16,15 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
+import { ERRORS } from '@common/constants/error-messages';
+import {
+  isForeignKeyError,
+  isNotFoundError,
+} from '@common/utils/prisma-errors';
 
 import {
   Content,
@@ -84,6 +91,16 @@ export class ChatService {
    * Hydrates the message history for a session.
    */
   async getMessages(conversationId: string) {
+    const conversation = await this.prisma.conversation.findUnique({
+      where: { id: conversationId },
+    });
+
+    if (!conversation) {
+      throw new NotFoundException(
+        ERRORS.CHAT.CONVERSATION_NOT_FOUND(conversationId),
+      );
+    }
+
     return this.prisma.message.findMany({
       where: { conversationId },
       orderBy: { createdAt: 'asc' },
@@ -94,9 +111,18 @@ export class ChatService {
    * The primary AI loop. Manages prompt engineering and context grounding.
    */
   async sendMessage(userId: string, conversationId: string, text: string) {
-    await this.prisma.message.create({
-      data: { conversationId, role: 'user', content: text },
-    });
+    try {
+      await this.prisma.message.create({
+        data: { conversationId, role: 'user', content: text },
+      });
+    } catch (error) {
+      if (isForeignKeyError(error)) {
+        throw new NotFoundException(
+          ERRORS.CHAT.CONVERSATION_NOT_FOUND(conversationId),
+        );
+      }
+      throw error;
+    }
 
     const locations = await this.taxonomyService.getAllLocations();
     const transactions = await this.taxonomyService.getAllTransactions();
@@ -156,10 +182,19 @@ export class ChatService {
       data: { conversationId, role: 'agent', content: responseText },
     });
 
-    await this.prisma.conversation.update({
-      where: { id: conversationId },
-      data: { updatedAt: new Date() },
-    });
+    try {
+      await this.prisma.conversation.update({
+        where: { id: conversationId },
+        data: { updatedAt: new Date() },
+      });
+    } catch (error) {
+      if (isNotFoundError(error)) {
+        throw new NotFoundException(
+          ERRORS.CHAT.CONVERSATION_NOT_FOUND(conversationId),
+        );
+      }
+      throw error;
+    }
 
     return responseText;
   }
