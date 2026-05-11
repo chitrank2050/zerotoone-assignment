@@ -1,50 +1,92 @@
 @import 'tailwindcss';
 
 @theme {
+  /* --- 🎨 Core Brand Palette (OKLCH) --- */
   --color-brand-primary: oklch(0.65 0.24 250);
   --color-brand-secondary: oklch(0.7 0.2 300);
-  --color-surface-glass: oklch(1 0 0 / 0.05);
-  --color-border-glass: oklch(1 0 0 / 0.1);
+  
+  /* --- 🌚 Neutral Scale (Minimalist Dark) --- */
+  --color-neutral-50: oklch(0.98 0 0);
+  --color-neutral-100: oklch(0.95 0 0);
+  --color-neutral-200: oklch(0.9 0 0);
+  --color-neutral-300: oklch(0.8 0 0);
+  --color-neutral-400: oklch(0.6 0 0);
+  --color-neutral-500: oklch(0.4 0 0);
+  --color-neutral-600: oklch(0.25 0 0);
+  --color-neutral-700: oklch(0.18 0 0);
+  --color-neutral-800: oklch(0.12 0 0);
+  --color-neutral-900: oklch(0.08 0 0);
+  --color-neutral-950: oklch(0.05 0 0);
 
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
+  /* --- ✨ Semantic Surface & Border --- */
+  --color-surface-base: var(--color-neutral-950);
+  --color-surface-glass: oklch(1 0 0 / 0.03);
+  --color-border-glass: oklch(1 0 0 / 0.08);
+  --color-border-strong: oklch(1 0 0 / 0.15);
+
+  /* --- 🚦 State Colors --- */
+  --color-success: oklch(0.75 0.15 150);
+  --color-error: oklch(0.65 0.2 20);
+  --color-warning: oklch(0.8 0.15 80);
+  --color-info: oklch(0.7 0.15 220);
+
+  /* --- 📏 Design Tokens --- */
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+  --shadow-premium: 0 20px 40px -15px oklch(0 0 0 / 0.5);
+  
+  --animate-fade-up: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-shake: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
 }
 
 :root {
-  --background: oklch(0.1 0 0);
-  --foreground: oklch(0.9 0 0);
-  --accent: var(--color-brand-primary);
-
-  font-family:
-    'Inter',
-    system-ui,
-    -apple-system,
-    sans-serif;
+  background-color: var(--color-neutral-950);
+  color: var(--color-neutral-100);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color-scheme: dark;
-}
-
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  min-height: 100vh;
-  margin: 0;
   -webkit-font-smoothing: antialiased;
 }
 
-@utility glass {
-  background: var(--color-surface-glass);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--color-border-glass);
-  border-radius: var(--radius-xl);
+body {
+  margin: 0;
+  min-height: 100vh;
 }
 
-@utility glass-card {
-  @apply glass p-6 shadow-2xl transition-all duration-300 hover:border-brand-primary/30;
+/* --- 🛠️ Custom Utilities --- */
+
+@utility glass {
+  background: var(--color-surface-glass);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--color-border-glass);
+}
+
+@utility glass-interactive {
+  @apply glass transition-all duration-300 hover:border-brand-primary/40 hover:bg-white/[0.05];
+}
+
+@utility text-minimal-label {
+  @apply text-[10px] font-black uppercase tracking-[0.15em] opacity-40;
+}
+
+@utility badge-status {
+  @apply px-2 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase border;
 }
 
 /* Scrollbar Customization */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -58,20 +100,4 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-brand-primary);
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
 }
