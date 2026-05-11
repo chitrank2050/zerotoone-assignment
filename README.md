@@ -64,7 +64,7 @@ pnpm install
 
 # 2. Setup Environment
 # Copy .env.example (if available) or create a .env in apps/backend with:
-# DATABASE_URL="file:./dev.db"
+# DATABASE_URL="file:./prisma/dev.db"
 # GEMINI_API_KEY="your-key"
 # JWT_SECRET="your-secret"
 
@@ -119,19 +119,19 @@ audience-builder/
 
 ## 🛠️ Operational Scripts
 
-| Command             | Scope    | Description                                      |
-| :------------------ | :------- | :----------------------------------------------- |
-| `pnpm setup`        | Root     | **One-click bootstrap**: Install + Migrate + Seed |
-| `pnpm dev`          | Root     | Starts all apps in parallel watch mode           |
-| `pnpm build`        | Root     | Performs a full build of all packages            |
-| `pnpm test`         | Root     | Runs all unit tests via Vitest                   |
-| `pnpm test:e2e`     | Backend  | Runs full End-to-End integration suite           |
-| `pnpm lint`         | Root     | Runs strict ESLint + Markdownlint                |
-| `pnpm format`       | Root     | Formats all code & documentation                 |
-| `pnpm db:generate`  | Backend  | Regenerates Prisma client                        |
-| `pnpm db:seed`      | Backend  | Hydrates LibSQL with targeting taxonomies        |
-| `pnpm docker:up`    | Infrastructure | Starts containerized services (Postgres/Redis)   |
-| `pnpm nuke`         | Root     | Cleans node_modules and performs fresh install   |
+| Command            | Scope          | Description                                       |
+| :----------------- | :------------- | :------------------------------------------------ |
+| `pnpm setup`       | Root           | **One-click bootstrap**: Install + Migrate + Seed |
+| `pnpm dev`         | Root           | Starts all apps in parallel watch mode            |
+| `pnpm build`       | Root           | Performs a full build of all packages             |
+| `pnpm test`        | Root           | Runs all unit tests via Vitest                    |
+| `pnpm test:e2e`    | Backend        | Runs full End-to-End integration suite            |
+| `pnpm lint`        | Root           | Runs strict ESLint + Markdownlint                 |
+| `pnpm format`      | Root           | Formats all code & documentation                  |
+| `pnpm db:generate` | Backend        | Regenerates Prisma client                         |
+| `pnpm db:seed`     | Backend        | Hydrates LibSQL with targeting taxonomies         |
+| `pnpm docker:up`   | Infrastructure | Starts containerized services (Postgres/Redis)    |
+| `pnpm nuke`        | Root           | Cleans node_modules and performs fresh install    |
 
 ---
 
