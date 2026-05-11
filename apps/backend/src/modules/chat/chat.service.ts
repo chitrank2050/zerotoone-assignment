@@ -90,12 +90,17 @@ export class ChatService {
   /**
    * Hydrates the message history for a session.
    */
-  async getMessages(conversationId: string) {
+  async getMessages(userId: string, conversationId: string) {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id: conversationId },
     });
 
     if (!conversation) {
+      throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
+    }
+
+    // Principal Grade Security: Verify ownership
+    if (conversation.userId !== userId) {
       throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
     }
 
@@ -110,18 +115,25 @@ export class ChatService {
    */
   async sendMessage(userId: string, conversationId: string, text: string) {
     try {
+      // Principal Grade Security: Ensure message is appended to OWN conversation
+      await this.prisma.conversation.findFirstOrThrow({
+        where: { id: conversationId, userId },
+      });
+
       await this.prisma.message.create({
         data: { conversationId, role: 'user', content: text },
       });
     } catch (error) {
-      if (isForeignKeyError(error)) {
+      if (isForeignKeyError(error) || isNotFoundError(error)) {
         throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
       }
       throw error;
     }
 
-    const locations = await this.taxonomyService.getAllLocations();
-    const transactions = await this.taxonomyService.getAllTransactions();
+    const [locations, transactions] = await Promise.all([
+      this.taxonomyService.getAllLocations(),
+      this.taxonomyService.getAllTransactions(),
+    ]);
 
     const systemPrompt = `
       You are an AI Audience Builder assistant for an advertising platform.

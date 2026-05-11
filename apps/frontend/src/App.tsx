@@ -108,7 +108,7 @@ const App: React.FC = () => {
               </h3>
               <p className="text-sm opacity-50 leading-relaxed font-medium">
                 Describe your target segment (e.g., "Tech-savvy gamers in
-                Seattle who love organic coffee"). The AI will extract signals
+                Seattle who love organic coffee”). The AI will extract signals
                 and calculate reach in real-time.
               </p>
             </div>
@@ -130,9 +130,12 @@ const App: React.FC = () => {
                   }`}
                 >
                   {m.role === 'user' ? (
-                    <UserIcon className="w-5 h-5" />
+                    <UserIcon className="w-5 h-5" aria-hidden="true" />
                   ) : (
-                    <Bot className="w-5 h-5 text-brand-primary" />
+                    <Bot
+                      className="w-5 h-5 text-brand-primary"
+                      aria-hidden="true"
+                    />
                   )}
                 </div>
                 <div
@@ -176,21 +179,28 @@ const App: React.FC = () => {
         <div className="p-8 pt-0">
           <form
             onSubmit={handleSend}
-            className="glass relative group p-1.5 pr-3 flex items-center gap-2 focus-within:border-brand-primary/50 transition-all shadow-2xl rounded-2xl"
+            className="glass relative group p-1.5 pr-3 flex items-center gap-2 focus-within:border-brand-primary/50 transition-[border-color,box-shadow,transform] duration-200 shadow-2xl rounded-2xl"
           >
+            <label htmlFor="chat-input" className="sr-only">
+              Audience description
+            </label>
             <input
+              id="chat-input"
+              name="audience-request"
+              autoComplete="off"
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter natural language audience request..."
-              className="flex-1 bg-transparent border-none outline-none px-5 py-4 text-sm placeholder:opacity-40 font-medium"
+              placeholder="Enter natural language audience request…"
+              className="flex-1 bg-transparent border-none outline-none px-5 py-4 text-sm placeholder:opacity-40 font-medium focus:ring-2 focus:ring-brand-primary/20 rounded-xl"
             />
             <button
               type="submit"
               disabled={!input.trim() || isTyping}
-              className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/30 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:grayscale"
+              aria-label="Send message"
+              className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center shadow-lg shadow-brand-primary/30 transition-[transform,filter] hover:scale-105 active:scale-95 disabled:opacity-50 disabled:grayscale"
             >
-              <Send className="w-5 h-5 text-white" />
+              <Send className="w-5 h-5 text-white" aria-hidden="true" />
             </button>
           </form>
           <div className="flex justify-center mt-4">
@@ -250,7 +260,7 @@ const App: React.FC = () => {
               <p className="text-xs font-bold text-brand-primary">LATEST</p>
             </div>
           </div>
-          <button className="w-full py-4 bg-brand-primary text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-brand-primary/30 hover:brightness-110 hover:translate-y-[-2px] transition-all active:scale-95 disabled:grayscale disabled:opacity-50">
+          <button className="w-full py-4 bg-brand-primary text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-brand-primary/30 hover:brightness-110 hover:translate-y-[-2px] transition-[transform,filter] active:scale-95 disabled:grayscale disabled:opacity-50">
             Commit Segment
           </button>
         </div>
@@ -271,7 +281,9 @@ const NavItem: React.FC<{
         : 'hover:bg-white/5 opacity-50 hover:opacity-100 border border-transparent hover:border-white/5'
     }`}
   >
-    <span className="w-5 h-5">{icon}</span>
+    <span className="w-5 h-5" aria-hidden="true">
+      {icon}
+    </span>
     <span className="text-xs font-bold uppercase tracking-widest hidden lg:block">
       {label}
     </span>

@@ -28,7 +28,7 @@ export const useChat = (conversationId?: string) => {
         try {
           // The apiClient interceptor returns data.data, so we cast to the inner type
           const conv = await (apiClient.post('/chat/conversations', {
-            title: content.substring(0, 30) + '...',
+            title: content.substring(0, 30) + '…',
           }) as unknown as Promise<{ id: string }>);
 
           currentId = conv.id;

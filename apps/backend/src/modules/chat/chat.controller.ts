@@ -137,7 +137,10 @@ export class ChatController {
     description: 'Chat messages retrieved',
     type: [MessageResponseDto],
   })
-  async getMessages(@Param('id') id: string) {
-    return this.chatService.getMessages(id);
+  async getMessages(
+    @CurrentUser('id') userId: string,
+    @Param('id') id: string,
+  ) {
+    return this.chatService.getMessages(userId, id);
   }
 }
