@@ -23,6 +23,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { ErrorResponseDto } from '@common/dto/error-response.dto';
 import { ApiResponse as AppResponse } from '@common/responses/api-response';
 
@@ -50,13 +51,10 @@ export class ChatController {
     description: 'Conversation created successfully',
     type: ConversationResponseDto,
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Not authenticated',
-    type: ErrorResponseDto,
-  })
-  async createConversation(@Body() dto: CreateConversationDto) {
-    const userId = 'admin-user-id';
+  async createConversation(
+    @CurrentUser('id') userId: string,
+    @Body() dto: CreateConversationDto,
+  ) {
     const result = await this.chatService.createConversation(
       userId,
       dto.title || 'New Build',
@@ -74,8 +72,7 @@ export class ChatController {
     description: 'List of sessions retrieved',
     type: [ConversationResponseDto],
   })
-  async getConversations() {
-    const userId = 'admin-user-id';
+  async getConversations(@CurrentUser('id') userId: string) {
     const result = await this.chatService.getConversations(userId);
     return AppResponse.ok(result);
   }
@@ -96,8 +93,11 @@ export class ChatController {
     description: 'Gemini API failure or internal error',
     type: ErrorResponseDto,
   })
-  async sendMessage(@Param('id') id: string, @Body() dto: SendMessageDto) {
-    const userId = 'admin-user-id';
+  async sendMessage(
+    @CurrentUser('id') userId: string,
+    @Param('id') id: string,
+    @Body() dto: SendMessageDto,
+  ) {
     const result = await this.chatService.sendMessage(userId, id, dto.text);
     return AppResponse.ok(result);
   }

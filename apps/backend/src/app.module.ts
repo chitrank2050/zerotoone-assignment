@@ -12,7 +12,9 @@
  *   - TaxonomyModule: Targeting signal management.
  *   - ChatModule: AI engine (Gemini) orchestration.
  */
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+
+import { IdentityMiddleware } from '@common/middleware/identity.middleware';
 
 import { AuthModule } from '@modules/auth/auth.module';
 import { ChatModule } from '@modules/chat/chat.module';
@@ -39,4 +41,8 @@ import { AppService } from './app.service';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(IdentityMiddleware).forRoutes('*');
+  }
+}
