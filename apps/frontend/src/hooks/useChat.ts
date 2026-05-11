@@ -15,12 +15,32 @@ export const useChat = (conversationId?: string) => {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | undefined>(conversationId);
 
   const sendMessage = useCallback(
     async (content: string) => {
       if (!content.trim()) return;
 
-      // 1. Optimistic Update for Messages
+      let currentId = activeId;
+
+      // 1. Initialize session if it's the first message
+      if (!currentId) {
+        try {
+          const conv = await apiClient.post<{ id: string }>(
+            '/chat/conversations',
+            {
+              title: content.substring(0, 30) + '...',
+            },
+          );
+          currentId = conv.id;
+          setActiveId(conv.id);
+        } catch (err: any) {
+          setError('Failed to initialize session: ' + err.message);
+          return;
+        }
+      }
+
+      // 2. Optimistic Update
       const userMessage: Message = {
         id: crypto.randomUUID(),
         role: 'user',
@@ -33,13 +53,13 @@ export const useChat = (conversationId?: string) => {
       setError(null);
 
       try {
-        // 2. Network Request
+        // 3. Network Request to synchronized route
         const response = await apiClient.post<
           any,
           { messages: Message[]; signals: Signal[] }
-        >(`/chat/${conversationId || 'new'}`, { content });
+        >(`/chat/conversations/${currentId}/messages`, { text: content });
 
-        // 3. Sync State (Messages and Signals)
+        // 4. Sync State (Messages and Signals)
         setMessages(response.messages);
         setSignals(response.signals);
 
@@ -50,7 +70,7 @@ export const useChat = (conversationId?: string) => {
         setIsTyping(false);
       }
     },
-    [conversationId],
+    [activeId],
   );
 
   const removeSignal = useCallback((id: string) => {
@@ -64,5 +84,6 @@ export const useChat = (conversationId?: string) => {
     error,
     sendMessage,
     removeSignal,
+    activeId,
   };
 };

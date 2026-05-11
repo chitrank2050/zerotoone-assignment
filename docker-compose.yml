@@ -14,6 +14,13 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
     volumes:
       - audience-data:/app/data
+    networks:
+      - audience-net
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+          cpus: '0.1'
     restart: unless-stopped
 
   # --- Frontend UX Layer ---
@@ -25,7 +32,18 @@ services:
       - "80:80"
     depends_on:
       - backend
+    networks:
+      - audience-net
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+          cpus: '0.1'
     restart: unless-stopped
+
+networks:
+  audience-net:
+    driver: bridge
 
 volumes:
   audience-data:

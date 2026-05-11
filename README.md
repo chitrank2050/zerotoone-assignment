@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>AI Audience Builder 🧠🏗️</h1>
+  <h1>AI Audience Builder ⚡</h1>
   <p><strong>A high-performance, principal-grade monorepo for AI-driven advertising segmentation.</strong></p>
 
   <p>
