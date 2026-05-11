@@ -13,9 +13,15 @@ pre-commit:
       run: pnpm exec eslint --fix {staged_files} && pnpm exec prettier --write {staged_files}
       stage_fixed: true
 
-    # 2. JSON / YAML / MD - Prettier format only
-    format-common:
-      glob: '**/*.{json,yml,yaml,md}'
+    # 2. Markdown files - markdownlint fix + Prettier format
+    lint-md:
+      glob: '**/*.md'
+      run: pnpm exec markdownlint --fix {staged_files} && pnpm exec prettier --write {staged_files}
+      stage_fixed: true
+
+    # 3. JSON / YAML - Prettier format only
+    format-json-yml:
+      glob: '**/*.{json,yml,yaml}'
       run: pnpm exec prettier --write {staged_files}
       stage_fixed: true
 

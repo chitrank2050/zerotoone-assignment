@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint && pnpm run lint:md",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\" --ignore-path .prettierignore",
     "db:deploy": "pnpm --filter backend run db:deploy",
     "db:migrate": "pnpm --filter backend run db:migrate",
@@ -12,7 +12,8 @@
     "docker:up": "docker compose up -d",
     "docker:build": "docker compose up --build -d",
     "docker:down": "docker compose down",
-    "docker:logs": "docker compose logs -f"
+    "docker:logs": "docker compose logs -f",
+    "lint:md": "markdownlint \"**/*.md\" --fix --ignore node_modules"
   },
   "devDependencies": {
     "@chitrank2050/git-hygiene": "^0.4.12",
@@ -23,6 +24,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "markdownlint-cli": "^0.48.0",
     "prettier": "latest",
     "turbo": "latest",
     "typescript-eslint": "^8.59.2"
