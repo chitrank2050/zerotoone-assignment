@@ -5,5 +5,6 @@ import { TaxonomyController } from './taxonomy.controller';
 @Module({
   providers: [TaxonomyService],
   controllers: [TaxonomyController],
+  exports: [TaxonomyService],
 })
 export class TaxonomyModule {}

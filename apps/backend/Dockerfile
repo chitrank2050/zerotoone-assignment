@@ -25,15 +25,19 @@ RUN apt-get update -y && apt-get install -y openssl
 
 COPY --from=build /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
 COPY --from=build /app/apps/backend/package.json ./apps/backend/
-COPY --from=build /app/packages/shared/package.json ./packages/shared/
+COPY --from=build /app/apps/backend/prisma ./apps/backend/prisma
+COPY --from=build /app/apps/backend/prisma.config.ts ./apps/backend/prisma.config.ts
+COPY --from=build /app/apps/backend/data ./apps/backend/data
+COPY --from=build /app/packages/shared ./packages/shared
 
 RUN corepack enable
 RUN pnpm install --prod --no-frozen-lockfile
 
-# Copy built assets and prisma
-COPY --from=build /app/apps/backend/dist ./apps/backend/dist
-COPY --from=build /app/apps/backend/prisma ./apps/backend/prisma
-COPY --from=build /app/packages/shared ./packages/shared
+# Generate Prisma Client for production
+RUN cd apps/backend && pnpm prisma generate --schema=prisma/schema.prisma
 
+# Copy built assets
+COPY --from=build /app/apps/backend/dist ./apps/backend/dist
+WORKDIR /app/apps/backend
 EXPOSE 3000
-CMD ["sh", "-c", "pnpm --filter backend run db:deploy && node apps/backend/dist/main"]
+CMD ["sh", "-c", "pnpm run db:deploy && node dist/main.js"]
