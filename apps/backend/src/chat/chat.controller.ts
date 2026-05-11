@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ApiResponse } from '../common/responses/api-response';
 
