@@ -14,54 +14,91 @@ import { Conversation, Message } from '@audience-builder/shared';
 
 import './App.css';
 
+/**
+ * Global Configuration
+ */
 const API_BASE = 'http://localhost:3000';
 
+/**
+ * Main Audience Builder Dashboard Component.
+ * Orchestrates real-time chat with Gemini AI, audience estimation,
+ * and session management for advertising planners.
+ */
 function App() {
+  // --- State Management ---
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Refs for UI orchestration
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * Initial Data Fetch: Load all existing conversations for the session sidebar.
+   */
   useEffect(() => {
     const fetchConversations = async () => {
-      const res = await fetch(`${API_BASE}/chat/conversations`);
-      const json = await res.json();
-      if (json.success) setConversations(json.data);
+      try {
+        const res = await fetch(`${API_BASE}/chat/conversations`);
+        const json = await res.json();
+        if (json.success) setConversations(json.data);
+      } catch (error) {
+        console.error('Failed to load sessions:', error);
+      }
     };
     fetchConversations();
   }, []);
 
+  /**
+   * Context Switch: Fetch message history whenever the active conversation changes.
+   */
   useEffect(() => {
     if (activeConvId) {
       const fetchMessages = async (id: string) => {
-        const res = await fetch(
-          `${API_BASE}/chat/conversations/${id}/messages`,
-        );
-        const json = await res.json();
-        if (json.success) setMessages(json.data);
+        try {
+          const res = await fetch(
+            `${API_BASE}/chat/conversations/${id}/messages`,
+          );
+          const json = await res.json();
+          if (json.success) setMessages(json.data);
+        } catch (error) {
+          console.error('Failed to load message history:', error);
+        }
       };
       fetchMessages(activeConvId);
     }
   }, [activeConvId]);
 
+  /**
+   * Action: Creates a new audience building session.
+   */
   const createConversation = async () => {
-    const res = await fetch(`${API_BASE}/chat/conversations`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: 'New Build' }),
-    });
-    const json = await res.json();
-    if (json.success) {
-      setConversations((prev) => [json.data, ...prev]);
-      setActiveConvId(json.data.id);
+    try {
+      const res = await fetch(`${API_BASE}/chat/conversations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: 'New Build' }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setConversations((prev) => [json.data, ...prev]);
+        setActiveConvId(json.data.id);
+      }
+    } catch (error) {
+      console.error('Failed to create new session:', error);
     }
   };
 
+  /**
+   * Action: Sends a natural language audience description to the AI engine.
+   * Manages optimistic UI updates and loading states.
+   */
   const handleSend = async () => {
     if (!input.trim() || !activeConvId) return;
 
+    // Optimistic UI Update: Show user message immediately
     const userMsg = { role: 'user' as const, content: input };
     setMessages([...messages, userMsg]);
     setInput('');
@@ -77,24 +114,31 @@ function App() {
         },
       );
       const json = await res.json();
+
       if (json.success) {
+        // Append AI response to the thread
         setMessages((prev) => [
           ...prev,
           { role: 'agent' as const, content: json.data },
         ]);
       }
+    } catch (error) {
+      console.error('AI Interaction Error:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  /**
+   * UI Orchestration: Auto-scroll to the bottom of the chat on new messages.
+   */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   return (
     <div className="layout">
-      {/* Sidebar */}
+      {/* ─── Sidebar: Navigation & Session History ─── */}
       <aside className="sidebar glass">
         <div className="sidebar-header">
           <div className="logo">
@@ -135,7 +179,7 @@ function App() {
         </div>
       </aside>
 
-      {/* Main Chat */}
+      {/* ─── Main Chat Panel: AI Interaction ─── */}
       <main className="chat-panel">
         <header className="chat-header">
           <h2>
@@ -198,7 +242,7 @@ function App() {
         </footer>
       </main>
 
-      {/* Right Panel: Signals & Estimation */}
+      {/* ─── Right Panel: Signals & Real-time Estimation ─── */}
       <aside className="control-panel glass">
         <section className="estimation">
           <h3>Audience Estimate</h3>
