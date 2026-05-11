@@ -23,7 +23,7 @@ import {
   Content,
 } from '@google/generative-ai';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../modules/prisma';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 import type {
   LocationTaxonomy,

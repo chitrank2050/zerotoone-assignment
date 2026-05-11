@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
-import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaModule } from '../modules/prisma/prisma.module';
 import { TaxonomyModule } from '../taxonomy/taxonomy.module';
 
 @Module({

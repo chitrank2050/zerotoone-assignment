@@ -13,26 +13,19 @@
  *   - ChatModule: AI engine (Gemini) orchestration.
  */
 import { Module } from '@nestjs/common';
-import { ConfigModule } from './common/config';
+import { ConfigModule } from './modules/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
+import { PrismaModule } from './modules/prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { TaxonomyModule } from './taxonomy/taxonomy.module';
 import { ChatModule } from './chat/chat.module';
-import { ThrottlerModule } from '@nestjs/throttler';
 import { HealthModule } from './modules/health';
 
 @Module({
   imports: [
     // 1. Global Infrastructure (Centralized & Validated)
     ConfigModule,
-    ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 10,
-      },
-    ]),
     PrismaModule,
     HealthModule,
 
