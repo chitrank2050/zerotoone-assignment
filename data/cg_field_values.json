@@ -1,23 +1,23 @@
 {
   "age_range": [
-    {"code": "18-24", "label": "18-24"},
-    {"code": "25-34", "label": "25-34"},
-    {"code": "35-44", "label": "35-44"},
-    {"code": "45-54", "label": "45-54"},
-    {"code": "55+", "label": "55+"}
+    { "code": "18-24", "label": "18-24" },
+    { "code": "25-34", "label": "25-34" },
+    { "code": "35-44", "label": "35-44" },
+    { "code": "45-54", "label": "45-54" },
+    { "code": "55+", "label": "55+" }
   ],
   "gender": [
-    {"code": "m", "label": "Male"},
-    {"code": "f", "label": "Female"},
-    {"code": "o", "label": "Other"}
+    { "code": "m", "label": "Male" },
+    { "code": "f", "label": "Female" },
+    { "code": "o", "label": "Other" }
   ],
   "income_bracket": [
-    {"code": "low", "label": "Below $50k"},
-    {"code": "mid", "label": "$50k - $100k"},
-    {"code": "high", "label": "$100k+"}
+    { "code": "low", "label": "Below $50k" },
+    { "code": "mid", "label": "$50k - $100k" },
+    { "code": "high", "label": "$100k+" }
   ],
   "shopping_habit": [
-    {"code": "premium", "label": "Premium Shopper"},
-    {"code": "value", "label": "Value Seeker"}
+    { "code": "premium", "label": "Premium Shopper" },
+    { "code": "value", "label": "Value Seeker" }
   ]
 }

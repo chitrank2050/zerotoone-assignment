@@ -1,7 +1,27 @@
 [
-  {"field": "age_range", "description": "Age range of the user", "type": "categorical"},
-  {"field": "gender", "description": "Gender of the user", "type": "categorical"},
-  {"field": "income_bracket", "description": "Household income bracket", "type": "categorical"},
-  {"field": "interest_fitness", "description": "Interest in fitness and wellness", "type": "boolean"},
-  {"field": "shopping_habit", "description": "General shopping behavior", "type": "categorical"}
+  {
+    "field": "age_range",
+    "description": "Age range of the user",
+    "type": "categorical"
+  },
+  {
+    "field": "gender",
+    "description": "Gender of the user",
+    "type": "categorical"
+  },
+  {
+    "field": "income_bracket",
+    "description": "Household income bracket",
+    "type": "categorical"
+  },
+  {
+    "field": "interest_fitness",
+    "description": "Interest in fitness and wellness",
+    "type": "boolean"
+  },
+  {
+    "field": "shopping_habit",
+    "description": "General shopping behavior",
+    "type": "categorical"
+  }
 ]

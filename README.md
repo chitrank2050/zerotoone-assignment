@@ -22,17 +22,21 @@ A high-rigor, chat-based audience builder for advertising campaigns. This projec
 ## 📦 Setup & Installation
 
 ### Prerequisites
+
 - Node.js >= 24
 - pnpm >= 9
 - Gemini API Key
 
 ### 1. Clone & Install
+
 ```bash
 pnpm install
 ```
 
 ### 2. Environment Setup
+
 Create `apps/backend/.env`:
+
 ```env
 DATABASE_URL="file:./dev.db"
 JWT_SECRET="your-secret"
@@ -41,22 +45,29 @@ PORT=3000
 ```
 
 ### 3. Database Initialization
+
 In the root:
+
 ```bash
 pnpm db:deploy
 ```
 
 ### 4. Run Development
+
 In the root:
+
 ```bash
 pnpm dev
 ```
 
 ### 🐳 Run with Docker
+
 If you prefer a containerized environment (from the root):
+
 ```bash
 pnpm docker:build
 ```
+
 This will start the backend on `localhost:3000` and the frontend on `localhost:80`.
 
 ## 📐 Design Decisions
@@ -67,8 +78,10 @@ This will start the backend on `localhost:3000` and the frontend on `localhost:8
 4.  **AI Prompting**: Implemented a "Context-Aware System Instruction" that injects the taxonomy directly into the LLM's short-term memory for high-precision signal mapping.
 
 ## 👥 Roles
+
 - **Admin**: Full access to all builds and configurations.
 - **Planner**: Access to chat and audience building.
 
 ---
+
 ❤️ Developed with Principal Rigor.
