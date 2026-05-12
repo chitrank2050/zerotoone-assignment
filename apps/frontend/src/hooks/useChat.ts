@@ -11,17 +11,19 @@ export const useChat = (conversationId?: string) => {
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize from props, then fallback to sessionStorage
-  const [activeId, setActiveId] = useState<string | undefined>(
-    conversationId || sessionStorage.getItem('activeChatId') || undefined,
-  );
+  const [activeId, setActiveId] = useState<string | undefined>(conversationId);
 
-  // Update sessionStorage whenever activeId changes
-  useEffect(() => {
-    if (activeId) {
-      sessionStorage.setItem('activeChatId', activeId);
+  // Sync state if conversationId prop changes (React recommended pattern)
+  if (conversationId !== activeId) {
+    setActiveId(conversationId);
+    if (!conversationId) {
+      // Clear state for New Chat
+      setMessages([]);
+      setSignals([]);
+      setTotalReach(0);
+      setError(null);
     }
-  }, [activeId]);
+  }
 
   // Rehydrate chat history on mount if we have an activeId
   useEffect(() => {
@@ -29,10 +31,9 @@ export const useChat = (conversationId?: string) => {
 
     const hydrateChat = async () => {
       try {
-        const response = await apiClient.get<Message[]>(
+        const history = await apiClient.get<unknown, Message[]>(
           `/chat/conversations/${activeId}/messages`,
         );
-        const history = response.data;
 
         // Strip JSON blocks for UI display
         const displayMessages = history.map((msg) => ({
@@ -78,12 +79,17 @@ export const useChat = (conversationId?: string) => {
       // 1. Initialize session if it's the first message
       if (!currentId) {
         try {
-          const conv = await (apiClient.post('/chat/conversations', {
-            title: content.substring(0, 30) + '…',
-          }) as unknown as Promise<{ id: string }>);
+          const response = await apiClient.post<unknown, { id: string }>(
+            '/chat/conversations',
+            {
+              title: content.substring(0, 30) + '…',
+            },
+          );
 
-          currentId = conv.id;
-          setActiveId(conv.id);
+          currentId = response.id;
+          setActiveId(currentId);
+          // Immediately update the URL so if the user refreshes, they stay in this new chat
+          window.history.replaceState(null, '', `/c/${currentId}`);
         } catch (err: any) {
           setError('Failed to initialize session: ' + err.message);
           return;

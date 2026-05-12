@@ -28,7 +28,7 @@ export const ChatFeed: React.FC = () => {
             key={m.id}
             className={`flex flex-col space-y-3 max-w-3xl animate-fade-in ${
               m.role === 'user' ? 'ml-auto items-end' : 'mr-auto items-start'
-            }`}
+            } last-of-type:pb-40`}
           >
             <div className="flex items-center gap-2 px-1">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-600">

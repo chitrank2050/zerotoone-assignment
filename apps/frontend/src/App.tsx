@@ -1,5 +1,11 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from 'react-router-dom';
 
 import * as Chat from './components/Chat';
 import * as Dashboard from './components/Dashboard';
@@ -32,10 +38,11 @@ const PublicOnlyRoute = ({ children }: { children: React.ReactNode }) => {
 
 const DashboardLayout = () => {
   const location = useLocation();
+  const { id } = useParams();
   const isTaxonomy = location.pathname === '/taxonomy';
 
   return (
-    <ChatProvider>
+    <ChatProvider conversationId={id}>
       <div className="flex h-screen overflow-hidden bg-neutral-950 text-neutral-100">
         <Dashboard.Sidebar />
 
@@ -70,13 +77,30 @@ const App = () => {
             }
           />
           <Route
-            path="/*"
+            path="/"
             element={
               <ProtectedRoute>
                 <DashboardLayout />
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/c/:id"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/taxonomy"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

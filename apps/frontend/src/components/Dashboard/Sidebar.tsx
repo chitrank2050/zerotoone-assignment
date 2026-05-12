@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { BarChart3, MessageSquare, Settings, Target } from 'lucide-react';
+import { BarChart3, MessageSquare, Plus, Settings, Target } from 'lucide-react';
 
+import apiClient from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 
 export const NavItem: React.FC<{
@@ -30,10 +31,24 @@ export const NavItem: React.FC<{
 export const Sidebar: React.FC = () => {
   const { logout } = useAuth();
   const location = useLocation();
+  const [history, setHistory] = useState<{ id: string; title: string }[]>([]);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        // The apiClient interceptor already unwraps response.data, so response IS the array
+        const response = await apiClient.get('/chat/conversations');
+        setHistory(Array.isArray(response) ? response : []);
+      } catch (err) {
+        console.error('Failed to load chat history', err);
+      }
+    };
+    fetchHistory();
+  }, [location.pathname]); // Refresh history when routing changes
 
   return (
-    <aside className="w-20 lg:w-56 border-r border-white/20 bg-neutral-950 flex flex-col p-8 z-20 animate-fade-in text-neutral-100">
-      <div className="flex items-center gap-3 mb-16">
+    <aside className="w-20 lg:w-56 border-r border-white/20 bg-neutral-950 flex flex-col p-8 z-20 animate-fade-in text-neutral-100 h-full overflow-y-auto overflow-x-hidden">
+      <div className="flex items-center gap-3 mb-16 shrink-0">
         <div className="w-8 h-8 border border-white/20 flex items-center justify-center rounded-lg bg-neutral-900 shadow-inner">
           <Target className="text-neutral-100 w-4 h-4" aria-hidden="true" />
         </div>
@@ -45,11 +60,29 @@ export const Sidebar: React.FC = () => {
       <nav className="flex-1 space-y-6">
         <Link to="/">
           <NavItem
-            icon={<MessageSquare className="w-4 h-4" />}
-            label="Chats"
+            icon={<Plus className="w-4 h-4" />}
+            label="New Chat"
             active={location.pathname === '/'}
           />
         </Link>
+
+        {history?.length > 0 && (
+          <div className="space-y-1">
+            <p className="px-2 text-[8px] font-bold uppercase tracking-widest text-neutral-600 mb-2 hidden lg:block">
+              Recent Chats
+            </p>
+            {history.map((chat) => (
+              <Link key={chat.id} to={`/c/${chat.id}`}>
+                <NavItem
+                  icon={<MessageSquare className="w-4 h-4" />}
+                  label={chat.title || 'Audience Build'}
+                  active={location.pathname === `/c/${chat.id}`}
+                />
+              </Link>
+            ))}
+          </div>
+        )}
+
         <Link to="/taxonomy">
           <NavItem
             icon={<BarChart3 className="w-4 h-4" />}
