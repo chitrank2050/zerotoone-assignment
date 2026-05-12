@@ -154,6 +154,21 @@ pnpm docker:logs
 
 ---
 
+## 📖 Documentation & CI/CD
+
+This project uses **Material for MkDocs** for beautiful, searchable documentation.
+
+- [**Full Documentation Site**](https://chitrank2050.github.io/audience-builder/)
+- [**API Reference**](./docs/api/overview.md)
+
+### 🚀 Automation Pipelines
+
+We maintain high engineering standards through automated GitHub Actions:
+
+- **Docs Deploy**: Automatically updates the documentation site on push to `main`.
+
+---
+
 <p align="center">
   ❤️ Developed by <b><a href="https://www.chitrankagnihotri.com">Chitrank Agnihotri</a></b>
 </p>

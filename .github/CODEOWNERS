@@ -1,0 +1,19 @@
+# AI Audience Builder - Code Ownership
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners (applied if no other rule matches)
+*       @chitrank2050
+
+# Backend specific ownership
+/apps/backend/   @chitrank2050
+
+# Frontend specific ownership
+/apps/frontend/  @chitrank2050
+
+# Shared contracts and packages
+/packages/shared/ @chitrank2050
+
+# Documentation and CI/CD
+/docs/           @chitrank2050
+/.github/        @chitrank2050
+/mkdocs.yml      @chitrank2050

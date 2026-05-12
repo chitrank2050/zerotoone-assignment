@@ -70,3 +70,13 @@ We follow Conventional Commits:
 - **Unit Tests**: Place `.spec.ts` files alongside the source code. Focus on testing business logic in services.
 - **Integration Tests**: Focus on API endpoints and database interactions.
 - **E2E Tests**: Use the `test:e2e` command in the backend to verify the full request-response lifecycle.
+
+---
+
+## 🚀 CI/CD & Deployment
+
+We use **GitHub Actions** to automate our documentation deployment.
+
+### 📖 Docs Pipeline (`docs.yml`)
+
+Automatically builds the **MkDocs** site and deploys it to GitHub Pages whenever changes are merged into the `main` branch.

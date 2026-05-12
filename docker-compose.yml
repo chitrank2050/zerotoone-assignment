@@ -10,17 +10,18 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=file:/app/data/prod.db
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-    volumes:
-      - audience-data:/app/data
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=3000
     networks:
       - audience-net
     deploy:
       resources:
         limits:
-          memory: 192M
-          cpus: '0.1'
+          memory: 256M
+          cpus: '0.2'
     restart: unless-stopped
 
   # --- Frontend UX Layer ---
@@ -30,6 +31,8 @@ services:
       dockerfile: apps/frontend/Dockerfile
     ports:
       - "80:80"
+    environment:
+      - VITE_API_URL=http://localhost:3000/api/v1
     depends_on:
       - backend
     networks:
@@ -37,14 +40,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 192M
+          memory: 128M
           cpus: '0.1'
     restart: unless-stopped
 
 networks:
   audience-net:
     driver: bridge
-
-volumes:
-  audience-data:
-    driver: local

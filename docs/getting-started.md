@@ -116,3 +116,22 @@ For interactive testing in watch mode:
 ```bash
 pnpm test:watch
 ```
+
+---
+
+## 📖 Documentation
+
+The project documentation is managed with **MkDocs**.
+
+- **Live Site**: [https://chitrank2050.github.io/audience-builder/](https://chitrank2050.github.io/audience-builder/)
+- **Local Preview**:
+
+  ```bash
+  # Install mkdocs-material
+  pip install mkdocs-material
+
+  # Start local server
+  mkdocs serve
+  ```
+
+  The documentation will be available at `http://localhost:8000`.
