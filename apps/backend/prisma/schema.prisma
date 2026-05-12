@@ -20,6 +20,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   conversations Conversation[]
+
+  @@index([email])
 }
 
 model Conversation {
@@ -30,6 +32,8 @@ model Conversation {
   messages  Message[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Message {
@@ -40,6 +44,8 @@ model Message {
   content        String
   metadata       String?      // JSON string for structured signals or tools
   createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
 }
 
 model LocationTaxonomy {
@@ -50,6 +56,9 @@ model LocationTaxonomy {
   parentId   String?
   parent     LocationTaxonomy?  @relation("Hierarchy", fields: [parentId], references: [id])
   children   LocationTaxonomy[] @relation("Hierarchy")
+
+  @@index([externalId])
+  @@index([parentId])
 }
 
 model TransactionTaxonomy {
@@ -60,6 +69,9 @@ model TransactionTaxonomy {
   parentId   String?
   parent     TransactionTaxonomy?  @relation("Hierarchy", fields: [parentId], references: [id])
   children   TransactionTaxonomy[] @relation("Hierarchy")
+
+  @@index([externalId])
+  @@index([parentId])
 }
 
 model DataDictionary {
@@ -78,7 +90,7 @@ model FieldValue {
   fieldName        String
   value            String
   description      String
-  
+
   @@unique([fieldName, value])
 }
 

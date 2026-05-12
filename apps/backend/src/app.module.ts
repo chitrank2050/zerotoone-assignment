@@ -21,23 +21,39 @@ import { HealthModule } from '@modules/health';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { TaxonomyModule } from '@modules/taxonomy/taxonomy.module';
 
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+
 import { CorrelationIdMiddleware } from './common/middleware/correlation-id.middleware';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
 @Module({
   imports: [
-    // 1. Global Infrastructure (Centralized & Validated)
+    // Global Infrastructure (Centralized & Validated)
     ConfigModule,
     PrismaModule,
     HealthModule,
 
-    // 2. Domain Modules
+    // Domain Modules
     AuthModule,
     TaxonomyModule,
     ChatModule,
+
+    // Security: Rate Limiting (DDoS Protection)
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100, // 100 requests per minute
+      },
+    ]),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   /**

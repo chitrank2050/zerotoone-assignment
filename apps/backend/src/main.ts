@@ -10,6 +10,7 @@ import { AppModule } from './app.module';
 import { getWinstonConfig } from '@modules/config/logger.config';
 import { API_PREFIX, API_VERSION } from '@common/constants/app';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
 /**
  * AI Audience Builder - Backend Entry Point
@@ -66,6 +67,7 @@ async function bootstrap(): Promise<void> {
 
   // Global Interceptors & Filters
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   if (ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()

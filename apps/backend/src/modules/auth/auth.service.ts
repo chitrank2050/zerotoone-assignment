@@ -30,13 +30,6 @@ export class AuthService {
       return result;
     }
 
-    // Fallback for local development if bcrypt fails (e.g. for seeded plain text)
-    if (user && user.password === loginDto.password) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _password, ...result } = user;
-      return result;
-    }
-
     return null;
   }
 
