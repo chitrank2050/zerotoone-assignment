@@ -13,6 +13,7 @@ import apiClient from '../api/client';
 export const useChat = (conversationId?: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [signals, setSignals] = useState<Signal[]>([]);
+  const [totalReach, setTotalReach] = useState<number>(0);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | undefined>(conversationId);
@@ -52,14 +53,10 @@ export const useChat = (conversationId?: string) => {
 
       try {
         // 3. Streaming Request (SSE)
-        // We use fetch directly for streaming support
         const baseUrl =
           apiClient.defaults.baseURL || 'http://localhost:3000/api/v1';
-        const url = `${baseUrl}/chat/conversations/${currentId}/stream?content=${encodeURIComponent(
-          content,
-        )}`;
+        const url = `${baseUrl}/chat/conversations/${currentId}/stream?content=${encodeURIComponent(content)}`;
 
-        // Get token from localStorage (assuming standard auth pattern)
         const token = localStorage.getItem('token');
 
         const response = await fetch(url, {
@@ -107,13 +104,27 @@ export const useChat = (conversationId?: string) => {
 
                 if (payload.chunk) {
                   fullContent += payload.chunk;
+                  // Strip JSON blocks from visible chat content (even while streaming)
+                  const displayContent = fullContent
+                    .replace(/```json[\s\S]*?(```|$)/g, '')
+                    .trim();
                   setMessages((prev) =>
                     prev.map((msg) =>
                       msg.id === aiMessageId
-                        ? { ...msg, content: fullContent }
+                        ? { ...msg, content: displayContent }
                         : msg,
                     ),
                   );
+                }
+
+                // Handle structured signals from AI response
+                if (payload.signals) {
+                  const { signals: newSignals, totalReach: reach } =
+                    payload.signals;
+                  if (Array.isArray(newSignals)) {
+                    setSignals(newSignals);
+                  }
+                  if (reach) setTotalReach(reach);
                 }
 
                 if (payload.done) break;
@@ -139,11 +150,14 @@ export const useChat = (conversationId?: string) => {
 
   const removeSignal = useCallback((id: string) => {
     setSignals((prev) => prev.filter((s) => s.id !== id));
+    // Recalculate reach when a signal is removed
+    setTotalReach((prev) => Math.round(prev * 0.8));
   }, []);
 
   return {
     messages,
     signals,
+    totalReach,
     isTyping,
     error,
     sendMessage,

@@ -30,7 +30,7 @@ export class EnvConfig {
   JWT_SECRET!: string;
 
   @IsString()
-  GEMINI_API_KEY!: string;
+  GROQ_API_KEY!: string;
 
   @IsString()
   @IsOptional()

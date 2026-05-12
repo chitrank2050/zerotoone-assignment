@@ -5,6 +5,7 @@ import type { Message, Signal } from '@audience-builder/shared';
 export interface ChatState {
   messages: Message[];
   signals: Signal[];
+  totalReach: number;
   isTyping: boolean;
   error: string | null;
   activeId?: string;

@@ -1,3 +1,5 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+
 import * as Chat from './components/Chat';
 import * as Dashboard from './components/Dashboard';
 import { LoginPage } from './components/LoginPage';
@@ -7,13 +9,27 @@ import { ChatProvider } from './context/ChatContext';
 /**
  * AI Audience Builder - Principal Grade Dashboard
  */
-const AppContent = () => {
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return <LoginPage />;
+    return <Navigate to="/login" replace />;
   }
 
+  return <>{children}</>;
+};
+
+const PublicOnlyRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+const DashboardLayout = () => {
   return (
     <ChatProvider>
       <div className="flex h-screen overflow-hidden bg-neutral-950 text-neutral-100">
@@ -32,7 +48,26 @@ const AppContent = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <AppContent />
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              <PublicOnlyRoute>
+                <LoginPage />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   );
 };

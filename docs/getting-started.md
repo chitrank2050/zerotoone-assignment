@@ -46,7 +46,7 @@ You must configure the environment variables for the backend to function correct
    ```env
    DATABASE_URL="postgresql://user:password@neon-host.neon.tech/audience_builder?sslmode=require"
    JWT_SECRET="your-high-entropy-secret"
-   GEMINI_API_KEY="your-google-ai-api-key"
+   GROQ_API_KEY="your-google-ai-api-key"
    PORT=3000
    ```
 

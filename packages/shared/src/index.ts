@@ -61,9 +61,10 @@ export interface Conversation {
  */
 export interface Signal {
   id: string;
-  name: string;
-  path: string;
-  type: 'location' | 'transaction' | 'cg';
+  name?: string;
+  label?: string; // AI-returned human-readable label
+  path?: string;
+  type: 'location' | 'transaction' | 'cg' | 'demographic' | 'interest';
   category?: string;
   reach?: number;
   confidence?: number;

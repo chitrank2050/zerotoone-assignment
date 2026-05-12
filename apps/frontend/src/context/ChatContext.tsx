@@ -15,6 +15,7 @@ export const ChatProvider = ({
   const {
     messages,
     signals,
+    totalReach,
     isTyping,
     error,
     sendMessage,
@@ -26,6 +27,7 @@ export const ChatProvider = ({
     state: {
       messages,
       signals,
+      totalReach,
       isTyping,
       error,
       activeId,

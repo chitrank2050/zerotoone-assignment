@@ -6,11 +6,11 @@
  * Endpoints:
  *   POST /chat/conversations           - Initialize a new audience build session
  *   GET  /chat/conversations           - List historical build sessions for the sidebar
- *   POST /chat/conversations/:id/msg   - Send description to Gemini and receive signals
+ *   POST /chat/conversations/:id/msg   - Send description to LLm and receive signals
  *   GET  /chat/conversations/:id/msg   - Hydrate chat thread on session switch
  *
  * Auth: Placeholder 'admin-user-id' used. In production, this maps to JWT sub.
- * Flow: Controller -> ChatService -> Gemini 1.5 Flash -> LibSQL (Prisma)
+ * Flow: Controller -> ChatService -> LLM -> DB (Prisma)
  */
 import {
   Body,

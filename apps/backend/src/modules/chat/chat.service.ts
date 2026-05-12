@@ -1,16 +1,13 @@
 /**
  * ChatService - AI Orchestration Engine
  *
- * The core business logic for the Audience Builder. Manages the integration
- * with Google Gemini 2.5 Flash and orchestrates the taxonomy injection loop.
+ * Powered by Groq (LLaMA 3.3 70B) for ultra-fast, free-tier inference.
  *
  * Logic Flow:
- *   1. Persistence: Save user intent to LibSQL.
- *   2. Contextualization: Fetch latest taxonomies for prompt groundedness.
- *   3. AI Negotiation: Start/Resume Gemini chat session with system instructions.
- *   4. Result Mapping: Extract signals from AI response and update session metadata.
- *
- * Performance: Optimized for low-latency AI responses via Gemini 2.5 Flash.
+ *   1. Persistence: Save user intent to PostgreSQL.
+ *   2. Contextualization: Fetch relevant taxonomies for RAG grounding.
+ *   3. AI Inference: Stream response via Groq's OpenAI-compatible API.
+ *   4. Signal Extraction: Parse structured JSON block from response.
  */
 import {
   Injectable,
@@ -19,6 +16,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import Groq from 'groq-sdk';
 
 import { ERRORS } from '@common/constants/error-messages';
 import { SYSTEM_PROMPTS } from '@common/constants/prompts';
@@ -27,30 +25,23 @@ import {
   isNotFoundError,
 } from '@common/utils/prisma-errors';
 
-import { GoogleGenAI } from '@google/genai';
-
 import { PrismaService } from '@modules/prisma/prisma.service';
-
 import type { Message } from '@prisma/client';
-
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 
 @Injectable()
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
-  private client: GoogleGenAI;
-  private readonly modelName = 'gemini-2.0-flash';
+  private client: Groq;
+  private readonly modelName = 'llama-3.3-70b-versatile';
 
   constructor(
     private configService: ConfigService,
     private prisma: PrismaService,
     private taxonomyService: TaxonomyService,
   ) {
-    const apiKey = this.configService.get<string>('GEMINI_API_KEY');
-    this.client = new GoogleGenAI({
-      apiKey: apiKey || '',
-      apiVersion: 'v1',
-    });
+    const apiKey = this.configService.get<string>('GROQ_API_KEY');
+    this.client = new Groq({ apiKey: apiKey || '' });
   }
 
   /**
@@ -94,7 +85,6 @@ export class ChatService {
       throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
     }
 
-    // Principal Grade Security: Verify ownership
     if (conversation.userId !== userId) {
       throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
     }
@@ -106,14 +96,13 @@ export class ChatService {
   }
 
   /**
-   * Prepares the Gemini chat contents with system prompts and history.
+   * Builds the OpenAI-compatible message array with system prompt + history.
    */
-  private async prepareContents(
+  private async buildMessages(
     userId: string,
     conversationId: string,
     text: string,
-  ) {
-    // --- RAG: Dynamic Context Grounding ---
+  ): Promise<Groq.Chat.ChatCompletionMessageParam[]> {
     const [relevantLocations, relevantTransactions] = await Promise.all([
       this.taxonomyService.searchLocations(text),
       this.taxonomyService.searchTransactions(text),
@@ -137,34 +126,26 @@ export class ChatService {
       orderBy: { createdAt: 'asc' },
     });
 
-    const contents: any[] = history.map((m: Message) => ({
-      role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.content }],
-    }));
+    const messages: Groq.Chat.ChatCompletionMessageParam[] = [
+      { role: 'system', content: systemPrompt },
+      ...history.map((m: Message) => ({
+        role: m.role === 'user' ? ('user' as const) : ('assistant' as const),
+        content: m.content,
+      })),
+      { role: 'user', content: text },
+    ];
 
-    if (contents.length === 1) {
-      contents.unshift({ role: 'user', parts: [{ text: systemPrompt }] });
-      contents.push({
-        role: 'model',
-        parts: [{ text: SYSTEM_PROMPTS.ACKNOWLEDGMENT }],
-      });
-    }
-
-    // Add current message
-    contents.push({ role: 'user', parts: [{ text }] });
-
-    return contents;
+    return messages;
   }
 
   /**
-   * The primary AI loop. Manages prompt engineering and context grounding.
+   * Non-streaming message send.
    */
   async sendMessage(userId: string, conversationId: string, text: string) {
     try {
       await this.prisma.conversation.findFirstOrThrow({
         where: { id: conversationId, userId },
       });
-
       await this.prisma.message.create({
         data: { conversationId, role: 'user', content: text },
       });
@@ -175,19 +156,18 @@ export class ChatService {
       throw error;
     }
 
-    const contents = await this.prepareContents(userId, conversationId, text);
+    const messages = await this.buildMessages(userId, conversationId, text);
 
     let responseText: string;
     try {
-      const response = await this.client.models.generateContent({
+      const completion = await this.client.chat.completions.create({
         model: this.modelName,
-        contents,
+        messages,
       });
-      responseText = response.text || '';
+      responseText = completion.choices[0]?.message?.content || '';
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(`Gemini API Error: ${errorMessage}`);
+      const msg = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Groq API Error: ${msg}`);
       throw new InternalServerErrorException(
         'Failed to communicate with AI service',
       );
@@ -196,7 +176,6 @@ export class ChatService {
     await this.prisma.message.create({
       data: { conversationId, role: 'agent', content: responseText },
     });
-
     await this.updateConversationTimestamp(conversationId);
 
     return responseText;
@@ -214,7 +193,6 @@ export class ChatService {
       await this.prisma.conversation.findFirstOrThrow({
         where: { id: conversationId, userId },
       });
-
       await this.prisma.message.create({
         data: { conversationId, role: 'user', content: text },
       });
@@ -223,42 +201,97 @@ export class ChatService {
       return;
     }
 
-    const contents = await this.prepareContents(userId, conversationId, text);
+    const messages = await this.buildMessages(userId, conversationId, text);
 
     let fullResponse = '';
     try {
-      const stream = await this.client.models.generateContentStream({
+      const stream = await this.client.chat.completions.create({
         model: this.modelName,
-        contents,
+        messages,
+        stream: true,
+        max_tokens: 2048,
       });
 
       for await (const chunk of stream) {
-        const chunkText = chunk.text || '';
-        fullResponse += chunkText;
-        yield { data: { chunk: chunkText } };
+        const chunkText = chunk.choices[0]?.delta?.content || '';
+        if (chunkText) {
+          fullResponse += chunkText;
+          yield { data: { chunk: chunkText } };
+        }
       }
 
-      // Persist full message and update timestamp
+      // Persist full response
       await this.prisma.message.create({
         data: { conversationId, role: 'agent', content: fullResponse },
       });
       await this.updateConversationTimestamp(conversationId);
 
+      // Extract structured signals from the JSON block in the response
+      const signals = this.extractSignals(fullResponse);
+      if (signals) {
+        yield { data: { signals } };
+      }
+
       yield { data: { done: true } };
     } catch (error: any) {
       const msg = error?.message || String(error);
-      this.logger.error(`Gemini Streaming Error: ${msg}`);
+      this.logger.error(`Groq Streaming Error: ${msg}`);
 
       let userError = 'Streaming failed. Please try again.';
-      if (msg.includes('429') || msg.includes('RESOURCE_EXHAUSTED')) {
-        userError =
-          'API quota exhausted. Please wait a minute or use a new API key.';
-      } else if (msg.includes('503') || msg.includes('UNAVAILABLE')) {
-        userError = 'Model temporarily unavailable. Please retry in a moment.';
+      if (msg.includes('429') || msg.includes('rate_limit')) {
+        userError = 'Rate limit reached. Please wait a moment and retry.';
+      } else if (msg.includes('401') || msg.includes('auth')) {
+        userError = 'Invalid API key. Please check your GROQ_API_KEY.';
       }
 
       yield { data: { error: userError } };
     }
+  }
+
+  /**
+   * Parses the structured JSON signal block embedded in the AI response.
+   */
+  private extractSignals(text: string): any | null {
+    try {
+      const match = text.match(/```json\s*([\s\S]*?)\s*```/);
+      if (!match?.[1]) return null;
+
+      const parsed = JSON.parse(match[1]);
+      if (!parsed.signals || !Array.isArray(parsed.signals)) return null;
+
+      parsed.signals = parsed.signals.map((s: any, idx: number) => ({
+        id: s.id || `signal-${idx}`,
+        type: s.type || 'interest',
+        label: s.label || 'Unknown Signal',
+        path: s.path || '',
+        reach: s.reach || this.estimateReach(s.type),
+      }));
+
+      if (!parsed.totalReach) {
+        const sum = parsed.signals.reduce(
+          (acc: number, s: any) => acc + (s.reach || 0),
+          0,
+        );
+        parsed.totalReach = Math.round(sum * 0.65);
+      }
+
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Fallback audience size estimates by signal type.
+   */
+  private estimateReach(type: string): number {
+    const estimates: Record<string, number> = {
+      location: 1_500_000,
+      transaction: 800_000,
+      demographic: 15_000_000,
+      interest: 3_000_000,
+    };
+    return estimates[type] ?? 1_000_000;
   }
 
   private async updateConversationTimestamp(conversationId: string) {

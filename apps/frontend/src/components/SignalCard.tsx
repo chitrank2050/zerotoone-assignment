@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
-
-import { X } from 'lucide-react';
+import { MapPin, ShoppingCart, TrendingUp, Users, X } from 'lucide-react';
 
 import type { Signal } from '@audience-builder/shared';
 
@@ -9,73 +7,77 @@ interface SignalCardProps {
   onRemove?: (id: string) => void;
 }
 
-/**
- * Super Minimal Signal Card
- */
-export const SignalCard = ({ signal, onRemove }: SignalCardProps) => {
-  // Deterministic trend based on ID
-  const trend = useMemo(() => {
-    const hash = signal.id
-      .split('')
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return Number(((hash % 15) + 2.5).toFixed(1));
-  }, [signal.id]);
+const TYPE_CONFIG: Record<
+  string,
+  { icon: React.ElementType; color: string; label: string }
+> = {
+  location: { icon: MapPin, color: 'text-blue-400', label: 'Location' },
+  transaction: {
+    icon: ShoppingCart,
+    color: 'text-emerald-400',
+    label: 'Purchase',
+  },
+  demographic: { icon: Users, color: 'text-violet-400', label: 'Demographic' },
+  interest: { icon: TrendingUp, color: 'text-amber-400', label: 'Interest' },
+  cg: { icon: Users, color: 'text-violet-400', label: 'Consumer Graph' },
+};
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('en-US', { notation: 'compact' }).format(num);
-  };
+export const SignalCard = ({ signal, onRemove }: SignalCardProps) => {
+  const displayName = signal.label || signal.name || 'Unknown Signal';
+  const cfg = TYPE_CONFIG[signal.type] || TYPE_CONFIG.interest;
+  const Icon = cfg.icon;
+
+  const formatReach = (n: number) =>
+    new Intl.NumberFormat('en-US', {
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    }).format(n);
 
   return (
-    <div className="group relative border-b border-border-subtle pb-6 last:border-0 animate-fade-in">
-      <div className="flex items-start justify-between mb-4">
-        <div className="space-y-1">
-          <h3 className="text-xs font-bold tracking-tight text-neutral-100 uppercase">
-            {signal.name}
-          </h3>
-          <p className="text-[10px] text-neutral-600 font-mono tracking-tighter">
-            {signal.path}
-          </p>
+    <div className="group relative p-4 rounded-xl border border-white/10 bg-neutral-900/40 hover:border-white/20 transition-all animate-fade-in">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start gap-3 min-w-0">
+          <div className={`mt-0.5 shrink-0 ${cfg.color}`}>
+            <Icon className="w-3.5 h-3.5" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-[11px] font-bold tracking-tight text-neutral-100 truncate">
+              {displayName}
+            </h3>
+            {signal.path && (
+              <p className="text-[9px] text-neutral-600 mt-0.5 truncate font-mono">
+                {signal.path}
+              </p>
+            )}
+            <span
+              className={`inline-block text-[8px] font-bold uppercase tracking-widest mt-1.5 ${cfg.color} opacity-70`}
+            >
+              {cfg.label}
+            </span>
+          </div>
         </div>
         <button
           onClick={() => onRemove?.(signal.id)}
-          className="text-neutral-700 hover:text-neutral-100 transition-colors"
+          className="shrink-0 text-neutral-700 hover:text-neutral-300 transition-colors p-0.5"
+          aria-label="Remove signal"
         >
           <X className="w-3 h-3" />
         </button>
       </div>
 
-      <div className="flex items-end justify-between">
-        <div className="space-y-1">
-          <p className="text-2xl font-bold tracking-tighter text-neutral-50 tabular-nums">
-            {formatNumber(signal.reach || 0)}
-          </p>
-          <p className="text-meta">Reach Estimate</p>
+      {signal.reach && signal.reach > 0 && (
+        <div className="mt-3 pt-3 border-t border-white/5 flex items-baseline justify-between">
+          <span className="text-[9px] text-neutral-600 uppercase tracking-widest">
+            Reach
+          </span>
+          <span className="text-sm font-bold text-neutral-200 tabular-nums">
+            {formatReach(signal.reach)}
+          </span>
         </div>
-        <div className="text-right">
-          <p className="text-xs font-bold text-neutral-100 tabular-nums">
-            {trend > 0 ? '+' : '-'}
-            {Math.abs(trend)}%
-          </p>
-          <p className="text-[8px] text-neutral-600 uppercase tracking-widest mt-0.5">
-            Variance
-          </p>
-        </div>
-      </div>
+      )}
 
-      <div className="mt-4 flex gap-3">
-        <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">
-          {signal.category}
-        </span>
-        <span className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">
-          {signal.type}
-        </span>
-      </div>
-
-      {/* Subtle indicator bar */}
-      <div
-        className="absolute -bottom-px left-0 h-px bg-neutral-100 transition-all duration-700 opacity-0 group-hover:opacity-30"
-        style={{ width: `${(signal.confidence || 0.8) * 100}%` }}
-      />
+      {/* Hover accent bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-b-xl" />
     </div>
   );
 };

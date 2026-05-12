@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 
 export const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('admin@example.com');
-  const [password, setPassword] = useState('password123');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { login } = useAuth();
@@ -83,7 +83,7 @@ export const LoginPage: React.FC = () => {
         </form>
 
         <p className="text-[9px] text-neutral-600 text-center mt-8 uppercase tracking-[0.2em]">
-          Secure Access Only • Powered by Gemini 2.5
+          Secure Access Only
         </p>
       </div>
     </div>

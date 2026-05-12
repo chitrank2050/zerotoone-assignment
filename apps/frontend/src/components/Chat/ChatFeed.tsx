@@ -52,7 +52,7 @@ export const ChatFeed: React.FC = () => {
           <div className="flex flex-col space-y-3 mr-auto items-start animate-fade-in">
             <div className="flex items-center gap-2 px-1">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-600">
-                Gemini
+                Groq
               </span>
             </div>
             <div className="bg-neutral-900/30 border border-white/20 p-6 rounded-[1.25rem] rounded-tl-none backdrop-blur-sm">
