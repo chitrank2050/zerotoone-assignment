@@ -25,7 +25,7 @@ export class PrismaHealthIndicator {
 
     try {
       // SELECT 1 is the lightest possible database check.
-      // Tests the full path: connection pool → network → Postgres → response.
+      // Tests the full path: connection pool → network → PostgreSQL (Neon) → response.
       await this.prisma.$queryRaw`SELECT 1`;
       return indicator.up();
     } catch (error) {

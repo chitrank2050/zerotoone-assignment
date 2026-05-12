@@ -8,14 +8,19 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  PLANNER
 }
 
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  role      String   // 'admin' or 'planner'
+  role      UserRole @default(PLANNER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -42,7 +47,7 @@ model Message {
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   role           String       // 'user' or 'agent'
   content        String
-  metadata       String?      // JSON string for structured signals or tools
+  metadata       Json?        // Native JSON support for signals
   createdAt      DateTime     @default(now())
 
   @@index([conversationId])
@@ -97,7 +102,7 @@ model FieldValue {
 model AudienceSegment {
   id             String   @id @default(uuid())
   name           String
-  signals        String   // JSON string of targeting signals
+  signals        Json     // Native JSON targeting signals
   sizeEstimate   Int
   createdAt      DateTime @default(now())
 }

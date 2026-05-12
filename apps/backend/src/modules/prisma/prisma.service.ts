@@ -15,9 +15,17 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
 
+/**
+ * PrismaService - Persistence Connector (PostgreSQL)
+ *
+ * Manages the connection lifecycle to the PostgreSQL database (Neon) via Prisma ORM.
+ * Implements OnModuleInit and OnModuleDestroy to ensure clean connection
+ * pooling and disconnection during application scaling or shutdown.
+ */
 @Injectable()
 export class PrismaService
   extends PrismaClient
@@ -26,10 +34,11 @@ export class PrismaService
   private readonly logger = new Logger(PrismaService.name);
 
   constructor() {
-    const adapter = new PrismaLibSql({
-      url: process.env.DATABASE_URL as string,
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL as string,
     });
-    // Inject the LibSQL adapter into the base PrismaClient
+    const adapter = new PrismaPg(pool);
+    // Inject the PostgreSQL adapter into the base PrismaClient
     super({ adapter });
   }
 
@@ -37,17 +46,17 @@ export class PrismaService
    * Established DB connection during NestJS module initialization.
    */
   async onModuleInit() {
-    this.logger.log('Connecting to SQLite database...');
+    this.logger.log('Connecting to PostgreSQL database...');
     await this.$connect();
-    this.logger.log('SQLite database connected');
+    this.logger.log('PostgreSQL database connected');
   }
 
   /**
    * Ensures clean disconnection to prevent connection leaks.
    */
   async onModuleDestroy() {
-    this.logger.log('Disconnecting from SQLite database...');
+    this.logger.log('Disconnecting from PostgreSQL database...');
     await this.$disconnect();
-    this.logger.log('SQLite database disconnected');
+    this.logger.log('PostgreSQL database disconnected');
   }
 }

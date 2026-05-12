@@ -47,8 +47,8 @@ export class HealthController {
    *
    *   {
    *     "status": "ok",
-   *     "info": { "database": { "status": "up" } },
-   *     "details": { "database": { "status": "up" } }
+   *     "info": { "postgres": { "status": "up" } },
+   *     "details": { "postgres": { "status": "up" } }
    *   }
    *
    * Load balancers and monitoring tools parse this automatically.
@@ -60,7 +60,7 @@ export class HealthController {
     return this.health.check([
       // Each arrow function returns a health indicator result.
       // If the check throws, Terminus catches it and reports "down".
-      () => this.prismaHealth.isHealthy('database'),
+      () => this.prismaHealth.isHealthy('postgres'),
     ]);
   }
 }
