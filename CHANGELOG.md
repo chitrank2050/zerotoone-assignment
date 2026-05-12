@@ -74,6 +74,9 @@ All notable changes to this project will be documented in this file.
 - Initialize changelog file
 - Add deployment guide, update architecture for Groq/React Router v7
 - Update site URL and add deployment guide to documentation navigation
+- Add Render free-tier cold start warnings and update deployment production endpoints
+- Add ALLOWED_ORIGINS to configuration documentation and update Groq API key example
+- Fix formatting and alignment of environment variable documentation table in README
 
 ### 🚀 Features
 
