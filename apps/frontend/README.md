@@ -9,6 +9,16 @@ The **Audience Builder Frontend** is a high-rigor, reactive dashboard designed f
 
 ---
 
+## 📖 Documentation
+
+For full architectural details and setup guides, please refer to the root documentation:
+
+- [**System Architecture**](../../docs/architecture.md)
+- [**Getting Started**](../../docs/getting-started.md)
+- [**Development Workflow**](../../docs/development.md)
+
+---
+
 ## 🏛️ Architecture & UX Design
 
 Built with **React 19** and **Vite**, this application prioritizes "State-as-URL Truth" and high-density visual feedback.

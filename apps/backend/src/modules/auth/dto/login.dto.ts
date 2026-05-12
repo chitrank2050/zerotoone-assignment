@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { LoginRequest } from '@audience-builder/shared';
 
-export class LoginDto {
+export class LoginDto implements LoginRequest {
   @ApiProperty({ example: 'admin@example.com' })
   @IsEmail()
   @IsNotEmpty()

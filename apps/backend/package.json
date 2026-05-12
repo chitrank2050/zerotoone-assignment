@@ -17,7 +17,7 @@
   "keywords": [
     "nestjs",
     "prisma",
-    "libsql",
+    "postgresql",
     "gemini-ai",
     "audience-builder",
     "backend"

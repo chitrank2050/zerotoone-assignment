@@ -20,8 +20,13 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
+  Sse,
+  MessageEvent,
   UseGuards,
 } from '@nestjs/common';
+import { Observable, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -124,7 +129,7 @@ export class ChatController {
     @Param('id') id: string,
     @Body() dto: SendMessageDto,
   ) {
-    return this.chatService.sendMessage(userId, id, dto.text);
+    return this.chatService.sendMessage(userId, id, dto.content);
   }
 
   /**
@@ -142,5 +147,20 @@ export class ChatController {
     @Param('id') id: string,
   ) {
     return this.chatService.getMessages(userId, id);
+  }
+
+  /**
+   * Streams audience description to AI engine using SSE.
+   */
+  @Sse('conversations/:id/stream')
+  @ApiOperation({ summary: 'Stream audience description to AI engine (SSE)' })
+  streamSendMessage(
+    @CurrentUser('id') userId: string,
+    @Param('id') id: string,
+    @Query('content') content: string,
+  ): Observable<MessageEvent> {
+    return from(this.chatService.sendMessageStream(userId, id, content)).pipe(
+      map((event) => event as MessageEvent),
+    );
   }
 }

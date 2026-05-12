@@ -26,7 +26,6 @@ export const useChat = (conversationId?: string) => {
       // 1. Initialize session if it's the first message
       if (!currentId) {
         try {
-          // The apiClient interceptor returns data.data, so we cast to the inner type
           const conv = await (apiClient.post('/chat/conversations', {
             title: content.substring(0, 30) + '…',
           }) as unknown as Promise<{ id: string }>);
@@ -39,7 +38,7 @@ export const useChat = (conversationId?: string) => {
         }
       }
 
-      // 2. Optimistic Update
+      // 2. Optimistic Update (User Message)
       const userMessage: Message = {
         id: crypto.randomUUID(),
         role: 'user',
@@ -52,20 +51,76 @@ export const useChat = (conversationId?: string) => {
       setError(null);
 
       try {
-        // 3. Network Request to synchronized route
-        // Backend ChatController expects { text: string }
-        const response = await (apiClient.post(
-          `/chat/conversations/${currentId}/messages`,
-          {
-            text: content,
+        // 3. Streaming Request (SSE)
+        // We use fetch directly for streaming support
+        const baseUrl =
+          apiClient.defaults.baseURL || 'http://localhost:3000/api/v1';
+        const url = `${baseUrl}/chat/conversations/${currentId}/stream?content=${encodeURIComponent(
+          content,
+        )}`;
+
+        // Get token from localStorage (assuming standard auth pattern)
+        const token = localStorage.getItem('token');
+
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'x-correlation-id': crypto.randomUUID(),
           },
-        ) as unknown as Promise<{ messages: Message[]; signals: Signal[] }>);
+        });
 
-        // 4. Sync State (Messages and Signals)
-        setMessages(response.messages);
-        setSignals(response.signals);
+        if (!response.ok) {
+          throw new Error('Streaming connection failed');
+        }
 
-        return response;
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error('Failed to start stream reader');
+
+        // 4. Create Agent Message Placeholder
+        const aiMessageId = crypto.randomUUID();
+        const aiMessage: Message = {
+          id: aiMessageId,
+          role: 'agent',
+          content: '',
+          createdAt: new Date().toISOString(),
+        };
+        setMessages((prev) => [...prev, aiMessage]);
+
+        const decoder = new TextDecoder();
+        let fullContent = '';
+
+        // 5. Read Stream Chunks
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const rawData = line.slice(6);
+                const data = JSON.parse(rawData);
+
+                if (data.chunk) {
+                  fullContent += data.chunk;
+                  setMessages((prev) =>
+                    prev.map((msg) =>
+                      msg.id === aiMessageId
+                        ? { ...msg, content: fullContent }
+                        : msg,
+                    ),
+                  );
+                }
+
+                if (data.done) break;
+              } catch {
+                // Ignore parse errors for partial chunks
+              }
+            }
+          }
+        }
       } catch (err: any) {
         setError(err.message);
       } finally {

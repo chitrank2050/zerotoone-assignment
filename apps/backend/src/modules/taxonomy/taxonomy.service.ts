@@ -9,7 +9,7 @@
  *   - Locations: Geographical hierarchies (Country > State > City).
  *   - Transactions: Category-based spending signals (e.g., Luxury Retail, Grocery).
  *
- * Performance: Utilizes LibSQL 'contains' queries for performant path-based search.
+ * Performance: Utilizes Prisma 'contains' queries for performant path-based search.
  */
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';

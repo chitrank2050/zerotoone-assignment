@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { SendMessageRequest } from '@audience-builder/shared';
 
-export class SendMessageDto {
+export class SendMessageDto implements SendMessageRequest {
   @ApiProperty({
     description: 'The natural language description of the target audience',
     example:
@@ -10,5 +11,5 @@ export class SendMessageDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(5)
-  text!: string;
+  content!: string;
 }

@@ -8,7 +8,7 @@
  *   GET /taxonomy/locations     - Search or list geographical targeting signals
  *   GET /taxonomy/transactions  - Search or list spending/categorical signals
  *
- * Performance: Leverages LibSQL 'contains' for performant path-based searching.
+ * Performance: Leverages Prisma 'contains' for performant path-based searching.
  */
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import {

@@ -12,13 +12,24 @@
 
 ---
 
+## 📖 Documentation
+
+For detailed guides and API references, please see the [docs/](./docs) directory:
+
+- [**System Architecture**](./docs/architecture.md): High-level overview and tech stack.
+- [**Getting Started**](./docs/getting-started.md): Installation and setup guide.
+- [**Development Workflow**](./docs/development.md): Standards, hygiene, and testing.
+- [**API Documentation**](./docs/api/overview.md): RESTful API reference and endpoints.
+
+---
+
 ## 🏛️ Architecture & Governance
 
 The **AI Audience Builder** is a high-rigor, spec-driven monorepo designed for maximum type safety and development velocity. It leverages a **Modular Monolith** backend and a reactive **React 19** frontend, synchronized via a unified contracts package.
 
 ### 🧠 System Layers
 
-- **Systems Grade (`apps/backend`)**: Built to the same high-rigor standards as [Meterplex](https://chitrankagnihotri.com/project/7d38770b-ce1f-4fb0-a394-434e2a614cb2). It features a modular monolith architecture, LibSQL persistence, and Gemini-AI signal extraction.
+- **Systems Grade (`apps/backend`)**: Built to the same high-rigor standards as [Meterplex](https://chitrankagnihotri.com/project/7d38770b-ce1f-4fb0-a394-434e2a614cb2). It features a modular monolith architecture, PostgreSQL persistence, and Gemini-AI signal extraction.
 - **UX Grade (`apps/frontend`)**: Real-time reactive dashboard with "State-as-URL Truth" and glassmorphic aesthetics.
 - **Contract Grade (`packages/shared`)**: The single source of truth for all cross-boundary DTOs and machine-readable error keys.
 
@@ -59,12 +70,13 @@ Built for production-grade troubleshooting:
 
 Before starting the system, ensure you have a `.env` file in `apps/backend/` with the following configuration:
 
-| Variable         | Description                | Example                    |
-| :--------------- | :------------------------- | :------------------------- |
-| `DATABASE_URL`   | Path to LibSQL database    | `file:./prisma/dev.db`     |
-| `JWT_SECRET`     | Secret key for auth tokens | `your-high-entropy-secret` |
-| `GEMINI_API_KEY` | Google AI API Key          | `AIzaSy...`                |
-| `PORT`           | Backend service port       | `3000`                     |
+| Variable         | Description                | Example                          |
+| :--------------- | :------------------------- | :------------------------------- |
+| `DATABASE_URL`   | Neon PostgreSQL URI        | `postgresql://user:pass@host/db` |
+| `REDIS_URL`      | Upstash Redis URI          | `redis://localhost:6379`         |
+| `JWT_SECRET`     | Secret key for auth tokens | `your-high-entropy-secret`       |
+| `GEMINI_API_KEY` | Google AI API Key          | `AIzaSy...`                      |
+| `PORT`           | Backend service port       | `3000`                           |
 
 ---
 
@@ -74,7 +86,7 @@ This monorepo supports two distinct execution modes. Choose the one that fits yo
 
 ### 💻 Mode A: Local Development (High Velocity)
 
-Best for active coding with Instant HMR and native debugging. Since we use **LibSQL/SQLite**, you **do not** need Docker running for this mode.
+Best for active coding with Instant HMR and native debugging. Ensure you have a local **PostgreSQL** instance running.
 
 ```bash
 # 1. One-click bootstrap (Install + Generate + Migrate)
@@ -121,14 +133,14 @@ pnpm docker:logs
 | `pnpm test:e2e`   | Backend | Runs full End-to-End integration suite   |
 | `pnpm test:cov`   | Root    | Generates workspace-wide coverage report |
 
-### 🗄️ Database (LibSQL/Prisma)
+### 🗄️ Database (PostgreSQL/Prisma)
 
 | Command            | Scope   | Description                                            |
 | :----------------- | :------ | :----------------------------------------------------- |
 | `pnpm db:generate` | Backend | Regenerates the Prisma client for all packages         |
 | `pnpm db:migrate`  | Backend | Create a new migration for schema changes              |
 | `pnpm db:deploy`   | Backend | Applies migrations non-interactively (used in `setup`) |
-| `pnpm db:seed`     | Backend | Hydrates LibSQL with targeting taxonomies              |
+| `pnpm db:seed`     | Backend | Hydrates PostgreSQL with targeting taxonomies          |
 | `pnpm db:reset`    | Backend | **Destructive**: Wipes and recreates the database      |
 
 ### 🐳 Infrastructure (Docker)

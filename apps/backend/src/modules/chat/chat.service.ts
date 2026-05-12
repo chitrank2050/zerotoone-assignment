@@ -108,28 +108,14 @@ export class ChatService {
   }
 
   /**
-   * The primary AI loop. Manages prompt engineering and context grounding.
+   * Prepares the Gemini chat session with system prompts and history.
    */
-  async sendMessage(userId: string, conversationId: string, text: string) {
-    try {
-      // Principal Grade Security: Ensure message is appended to OWN conversation
-      await this.prisma.conversation.findFirstOrThrow({
-        where: { id: conversationId, userId },
-      });
-
-      await this.prisma.message.create({
-        data: { conversationId, role: 'user', content: text },
-      });
-    } catch (error) {
-      if (isForeignKeyError(error) || isNotFoundError(error)) {
-        throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
-      }
-      throw error;
-    }
-
+  private async prepareChat(
+    userId: string,
+    conversationId: string,
+    text: string,
+  ) {
     // --- RAG: Dynamic Context Grounding ---
-    // Instead of sending 5000+ signals, we perform a lightweight fuzzy match
-    // to find the most relevant branches for the user's current request.
     const [relevantLocations, relevantTransactions] = await Promise.all([
       this.taxonomyService.searchLocations(text),
       this.taxonomyService.searchTransactions(text),
@@ -166,7 +152,29 @@ export class ChatService {
       });
     }
 
-    const chat = this.model.startChat({ history: chatHistory });
+    return this.model.startChat({ history: chatHistory });
+  }
+
+  /**
+   * The primary AI loop. Manages prompt engineering and context grounding.
+   */
+  async sendMessage(userId: string, conversationId: string, text: string) {
+    try {
+      await this.prisma.conversation.findFirstOrThrow({
+        where: { id: conversationId, userId },
+      });
+
+      await this.prisma.message.create({
+        data: { conversationId, role: 'user', content: text },
+      });
+    } catch (error) {
+      if (isForeignKeyError(error) || isNotFoundError(error)) {
+        throw new NotFoundException(ERRORS.CHAT.CONVERSATION_NOT_FOUND);
+      }
+      throw error;
+    }
+
+    const chat = await this.prepareChat(userId, conversationId, text);
 
     let responseText: string;
     try {
@@ -175,8 +183,7 @@ export class ChatService {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      const errorStack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(`Gemini API Error: ${errorMessage}`, errorStack);
+      this.logger.error(`Gemini API Error: ${errorMessage}`);
       throw new InternalServerErrorException(
         'Failed to communicate with AI service',
       );
@@ -186,6 +193,58 @@ export class ChatService {
       data: { conversationId, role: 'agent', content: responseText },
     });
 
+    await this.updateConversationTimestamp(conversationId);
+
+    return responseText;
+  }
+
+  /**
+   * Streams the AI response using SSE.
+   */
+  async *sendMessageStream(
+    userId: string,
+    conversationId: string,
+    text: string,
+  ) {
+    try {
+      await this.prisma.conversation.findFirstOrThrow({
+        where: { id: conversationId, userId },
+      });
+
+      await this.prisma.message.create({
+        data: { conversationId, role: 'user', content: text },
+      });
+    } catch {
+      yield { data: { error: ERRORS.CHAT.CONVERSATION_NOT_FOUND } };
+      return;
+    }
+
+    const chat = await this.prepareChat(userId, conversationId, text);
+
+    let fullResponse = '';
+    try {
+      const result = await chat.sendMessageStream(text);
+
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text();
+        fullResponse += chunkText;
+        yield { data: { chunk: chunkText } };
+      }
+
+      // Persist full message and update timestamp
+      await this.prisma.message.create({
+        data: { conversationId, role: 'agent', content: fullResponse },
+      });
+      await this.updateConversationTimestamp(conversationId);
+
+      yield { data: { done: true } };
+    } catch (error) {
+      this.logger.error(`Gemini Streaming Error: ${error}`);
+      yield { data: { error: 'Streaming failed' } };
+    }
+  }
+
+  private async updateConversationTimestamp(conversationId: string) {
     try {
       await this.prisma.conversation.update({
         where: { id: conversationId },
@@ -197,7 +256,5 @@ export class ChatService {
       }
       throw error;
     }
-
-    return responseText;
   }
 }
