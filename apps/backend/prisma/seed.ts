@@ -58,7 +58,14 @@ function loadCsv<T>(filename: string): T[] {
 
 // --- Seeding Modules ---
 
+// --- Seeding Modules ---
+
 async function seedUsers() {
+  const count = await prisma.user.count();
+  if (count > 0) {
+    console.log('👤 Users already exist, skipping...');
+    return;
+  }
   console.log('👤 Seeding Users...');
   return Promise.all([
     prisma.user.upsert({
@@ -84,57 +91,49 @@ async function seedUsers() {
 }
 
 async function seedMetadata() {
-  console.log('📖 Seeding Metadata Layer...');
+  const dictCount = await prisma.dataDictionary.count();
+  if (dictCount > 0) {
+    console.log('📖 Metadata already exists, skipping...');
+    return;
+  }
+  console.log('📖 Seeding Metadata Layer (Batch)...');
 
   const dictRecords = loadCsv<DictRecord>('cg_data_dictionary.csv');
   const valueRecords = loadCsv<ValueRecord>('cg_field_values.csv');
 
-  const dictOps = dictRecords.map((r) =>
-    prisma.dataDictionary.upsert({
-      where: { fieldName: r['Field Name'] },
-      update: {},
-      create: {
-        fieldName: r['Field Name'],
-        fieldDescription: r['Field Description'],
-        fieldType: r['Field Type'],
-        attributes: r['Attributes'],
-        fieldValues: r['Field Values'],
-        minRange: r['Field Range Min']
-          ? parseFloat(r['Field Range Min'])
-          : null,
-        maxRange: r['Field Range Max']
-          ? parseFloat(r['Field Range Max'])
-          : null,
-      },
-    }),
-  );
+  await prisma.dataDictionary.createMany({
+    data: dictRecords.map((r) => ({
+      fieldName: r['Field Name'],
+      fieldDescription: r['Field Description'],
+      fieldType: r['Field Type'],
+      attributes: r['Attributes'],
+      fieldValues: r['Field Values'],
+      minRange: r['Field Range Min'] ? parseFloat(r['Field Range Min']) : null,
+      maxRange: r['Field Range Max'] ? parseFloat(r['Field Range Max']) : null,
+    })),
+    skipDuplicates: true,
+  });
 
-  const valueOps = valueRecords.map((r) =>
-    prisma.fieldValue.upsert({
-      where: {
-        fieldName_value: {
-          fieldName: r['Field Name'],
-          value: r['Field Value'],
-        },
-      },
-      update: {},
-      create: {
-        fieldName: r['Field Name'],
-        value: r['Field Value'],
-        description: r['Field Value Description'],
-      },
-    }),
-  );
-
-  return Promise.all([...dictOps, ...valueOps]);
+  await prisma.fieldValue.createMany({
+    data: valueRecords.map((r) => ({
+      fieldName: r['Field Name'],
+      value: r['Field Value'],
+      description: r['Field Value Description'],
+    })),
+    skipDuplicates: true,
+  });
 }
 
 async function seedLocationTaxonomy() {
+  const count = await prisma.locationTaxonomy.count();
+  if (count > 0) {
+    console.log('📍 Location Taxonomy already exists, skipping...');
+    return;
+  }
   console.log('📍 Seeding Location Taxonomy...');
   const records = loadCsv<LocationRecord>('location_taxonomy.csv');
   const cache = new Map<string, string>();
 
-  // Process serially to maintain hierarchy integrity
   for (const r of records) {
     const top = r.top_category?.trim();
     const sub = r.sub_category?.trim();
@@ -171,6 +170,11 @@ async function seedLocationTaxonomy() {
 }
 
 async function seedTransactionTaxonomy() {
+  const count = await prisma.transactionTaxonomy.count();
+  if (count > 0) {
+    console.log('💸 Transaction Taxonomy already exists, skipping...');
+    return;
+  }
   console.log('💸 Seeding Transaction Taxonomy...');
   const records = loadCsv<TransRecord>('transaction_taxonomy.csv');
   const cache = new Map<string, string>();

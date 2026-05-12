@@ -38,7 +38,7 @@ The project is organized as a **Turborepo** monorepo:
 - **Database**: [PostgreSQL](https://www.postgresql.org/) (via [Neon](https://neon.tech/))
 - **ORM**: [Prisma](https://www.prisma.io/)
 - **AI Engine**: [Google Gemini AI](https://ai.google.dev/)
-- **Caching**: [Redis](https://redis.io/) (via [Upstash](https://upstash.com/))
+- **Caching**: In-Memory (Standard)
 - **Observability**: Custom Correlation ID middleware & Performance Logging.
 
 ### Frontend (`apps/frontend`)

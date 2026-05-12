@@ -45,7 +45,6 @@ You must configure the environment variables for the backend to function correct
 
    ```env
    DATABASE_URL="postgresql://user:password@neon-host.neon.tech/audience_builder?sslmode=require"
-   REDIS_URL="redis://default:password@upstash-host.upstash.io:6379"
    JWT_SECRET="your-high-entropy-secret"
    GEMINI_API_KEY="your-google-ai-api-key"
    PORT=3000

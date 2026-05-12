@@ -16,6 +16,8 @@ export default defineConfig({
   /** Database connection - Essential for Prisma 7 Migrate */
   datasource: {
     url: process.env['DATABASE_URL']!,
+    // @ts-expect-error - directUrl is supported by Prisma 7 runtime but missing in current type definitions
+    directUrl: process.env['DIRECT_URL']!,
   },
 
   /** Migration settings including seed command */
