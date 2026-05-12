@@ -101,10 +101,12 @@ export const useChat = (conversationId?: string) => {
             if (line.startsWith('data: ')) {
               try {
                 const rawData = line.slice(6);
-                const data = JSON.parse(rawData);
+                const parsed = JSON.parse(rawData);
+                // NestJS SSE wraps in { data: {...} }
+                const payload = parsed.data || parsed;
 
-                if (data.chunk) {
-                  fullContent += data.chunk;
+                if (payload.chunk) {
+                  fullContent += payload.chunk;
                   setMessages((prev) =>
                     prev.map((msg) =>
                       msg.id === aiMessageId
@@ -114,7 +116,12 @@ export const useChat = (conversationId?: string) => {
                   );
                 }
 
-                if (data.done) break;
+                if (payload.done) break;
+
+                if (payload.error) {
+                  setError(payload.error);
+                  break;
+                }
               } catch {
                 // Ignore parse errors for partial chunks
               }

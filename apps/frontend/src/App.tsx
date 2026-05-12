@@ -1,33 +1,39 @@
 import * as Chat from './components/Chat';
 import * as Dashboard from './components/Dashboard';
+import { LoginPage } from './components/LoginPage';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ChatProvider } from './context/ChatContext';
 
 /**
  * AI Audience Builder - Principal Grade Dashboard
- *
- * Refactored using Vercel Composition Patterns:
- * - Lifted state into ChatProvider
- * - Compound components for Dashboard and Chat
- * - Modular, readable architecture
  */
-const App = () => {
+const AppContent = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
   return (
     <ChatProvider>
-      <div className="flex h-screen overflow-hidden bg-background text-foreground">
-        {/* --- 🛠️ Sidebar (Navigation) --- */}
+      <div className="flex h-screen overflow-hidden bg-neutral-950 text-neutral-100">
         <Dashboard.Sidebar />
-
-        {/* --- 🧠 Main Content (Chat Engine) --- */}
         <Dashboard.Main>
           <Chat.Header />
           <Chat.Feed />
           <Chat.Input />
         </Dashboard.Main>
-
-        {/* --- 📊 Signal Explorer (Right Panel) --- */}
         <Dashboard.Explorer />
       </div>
     </ChatProvider>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 

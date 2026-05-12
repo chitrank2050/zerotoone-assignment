@@ -2,7 +2,7 @@
  * ChatService - AI Orchestration Engine
  *
  * The core business logic for the Audience Builder. Manages the integration
- * with Google Gemini 1.5 Flash and orchestrates the taxonomy injection loop.
+ * with Google Gemini 2.5 Flash and orchestrates the taxonomy injection loop.
  *
  * Logic Flow:
  *   1. Persistence: Save user intent to LibSQL.
@@ -10,7 +10,7 @@
  *   3. AI Negotiation: Start/Resume Gemini chat session with system instructions.
  *   4. Result Mapping: Extract signals from AI response and update session metadata.
  *
- * Performance: Optimized for low-latency AI responses via Gemini 1.5 Flash.
+ * Performance: Optimized for low-latency AI responses via Gemini 2.5 Flash.
  */
 import {
   Injectable,
@@ -27,11 +27,7 @@ import {
   isNotFoundError,
 } from '@common/utils/prisma-errors';
 
-import {
-  Content,
-  GenerativeModel,
-  GoogleGenerativeAI,
-} from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 import { PrismaService } from '@modules/prisma/prisma.service';
 
@@ -42,8 +38,8 @@ import { TaxonomyService } from '../taxonomy/taxonomy.service';
 @Injectable()
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
-  private genAI: GoogleGenerativeAI;
-  private model: GenerativeModel;
+  private client: GoogleGenAI;
+  private readonly modelName = 'gemini-2.0-flash';
 
   constructor(
     private configService: ConfigService,
@@ -51,8 +47,10 @@ export class ChatService {
     private taxonomyService: TaxonomyService,
   ) {
     const apiKey = this.configService.get<string>('GEMINI_API_KEY');
-    this.genAI = new GoogleGenerativeAI(apiKey || '');
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    this.client = new GoogleGenAI({
+      apiKey: apiKey || '',
+      apiVersion: 'v1',
+    });
   }
 
   /**
@@ -108,9 +106,9 @@ export class ChatService {
   }
 
   /**
-   * Prepares the Gemini chat session with system prompts and history.
+   * Prepares the Gemini chat contents with system prompts and history.
    */
-  private async prepareChat(
+  private async prepareContents(
     userId: string,
     conversationId: string,
     text: string,
@@ -139,20 +137,23 @@ export class ChatService {
       orderBy: { createdAt: 'asc' },
     });
 
-    const chatHistory: Content[] = history.map((m: Message) => ({
+    const contents: any[] = history.map((m: Message) => ({
       role: m.role === 'user' ? 'user' : 'model',
       parts: [{ text: m.content }],
     }));
 
-    if (chatHistory.length === 1) {
-      chatHistory.unshift({ role: 'user', parts: [{ text: systemPrompt }] });
-      chatHistory.push({
+    if (contents.length === 1) {
+      contents.unshift({ role: 'user', parts: [{ text: systemPrompt }] });
+      contents.push({
         role: 'model',
         parts: [{ text: SYSTEM_PROMPTS.ACKNOWLEDGMENT }],
       });
     }
 
-    return this.model.startChat({ history: chatHistory });
+    // Add current message
+    contents.push({ role: 'user', parts: [{ text }] });
+
+    return contents;
   }
 
   /**
@@ -174,12 +175,15 @@ export class ChatService {
       throw error;
     }
 
-    const chat = await this.prepareChat(userId, conversationId, text);
+    const contents = await this.prepareContents(userId, conversationId, text);
 
     let responseText: string;
     try {
-      const result = await chat.sendMessage(text);
-      responseText = result.response.text();
+      const response = await this.client.models.generateContent({
+        model: this.modelName,
+        contents,
+      });
+      responseText = response.text || '';
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -219,14 +223,17 @@ export class ChatService {
       return;
     }
 
-    const chat = await this.prepareChat(userId, conversationId, text);
+    const contents = await this.prepareContents(userId, conversationId, text);
 
     let fullResponse = '';
     try {
-      const result = await chat.sendMessageStream(text);
+      const stream = await this.client.models.generateContentStream({
+        model: this.modelName,
+        contents,
+      });
 
-      for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
+      for await (const chunk of stream) {
+        const chunkText = chunk.text || '';
         fullResponse += chunkText;
         yield { data: { chunk: chunkText } };
       }
@@ -238,9 +245,19 @@ export class ChatService {
       await this.updateConversationTimestamp(conversationId);
 
       yield { data: { done: true } };
-    } catch (error) {
-      this.logger.error(`Gemini Streaming Error: ${error}`);
-      yield { data: { error: 'Streaming failed' } };
+    } catch (error: any) {
+      const msg = error?.message || String(error);
+      this.logger.error(`Gemini Streaming Error: ${msg}`);
+
+      let userError = 'Streaming failed. Please try again.';
+      if (msg.includes('429') || msg.includes('RESOURCE_EXHAUSTED')) {
+        userError =
+          'API quota exhausted. Please wait a minute or use a new API key.';
+      } else if (msg.includes('503') || msg.includes('UNAVAILABLE')) {
+        userError = 'Model temporarily unavailable. Please retry in a moment.';
+      }
+
+      yield { data: { error: userError } };
     }
   }
 

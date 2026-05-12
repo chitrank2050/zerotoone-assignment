@@ -22,7 +22,13 @@ const apiClient = axios.create({
 // --- 📊 Observability Interceptors ---
 
 apiClient.interceptors.request.use((config) => {
-  // Generate a unique correlation ID for this request cycle
+  // 1. Inject Authentication Token
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  // 2. Inject Observability Context
   const correlationId = crypto.randomUUID();
   config.headers['x-correlation-id'] = correlationId;
 
@@ -32,6 +38,7 @@ apiClient.interceptors.request.use((config) => {
       'color: #3b82f6; font-weight: bold;',
       {
         correlationId,
+        token: token ? '***' : 'none',
         data: config.data,
       },
     );

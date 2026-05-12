@@ -73,7 +73,7 @@ export const SignalCard = ({ signal, onRemove }: SignalCardProps) => {
 
       {/* Subtle indicator bar */}
       <div
-        className="absolute -bottom-px left-0 h-[1px] bg-neutral-100 transition-all duration-700 opacity-0 group-hover:opacity-30"
+        className="absolute -bottom-px left-0 h-px bg-neutral-100 transition-all duration-700 opacity-0 group-hover:opacity-30"
         style={{ width: `${(signal.confidence || 0.8) * 100}%` }}
       />
     </div>

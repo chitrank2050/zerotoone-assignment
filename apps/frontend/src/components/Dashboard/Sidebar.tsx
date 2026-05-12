@@ -18,19 +18,19 @@ export const NavItem: React.FC<{
     >
       {icon}
     </span>
-    <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:block">
+    <span className="text-[10px] font-bold uppercase tracking-[0.2em] hidden lg:block">
       {label}
     </span>
   </div>
 );
 
 export const Sidebar: React.FC = () => (
-  <aside className="w-20 lg:w-56 border-r border-neutral-900 bg-neutral-950 flex flex-col p-6 z-20 animate-fade-in text-neutral-100">
+  <aside className="w-20 lg:w-56 border-r border-white/20 bg-neutral-950 flex flex-col p-8 z-20 animate-fade-in text-neutral-100">
     <div className="flex items-center gap-3 mb-16">
-      <div className="w-8 h-8 border border-neutral-800 flex items-center justify-center rounded-sm">
+      <div className="w-8 h-8 border border-white/20 flex items-center justify-center rounded-lg bg-neutral-900 shadow-inner">
         <Target className="text-neutral-100 w-4 h-4" aria-hidden="true" />
       </div>
-      <span className="font-bold text-xs hidden lg:block tracking-widest uppercase">
+      <span className="font-bold text-[11px] hidden lg:block tracking-[0.2em] uppercase">
         Audience
       </span>
     </div>
@@ -45,9 +45,9 @@ export const Sidebar: React.FC = () => (
       <NavItem icon={<Settings className="w-4 h-4" />} label="Settings" />
     </nav>
 
-    <div className="mt-auto pt-6 border-t border-neutral-900">
+    <div className="mt-auto pt-6 border-t border-white/20">
       <div className="flex flex-col gap-1 px-2 py-2 group cursor-default">
-        <p className="text-[10px] font-bold uppercase tracking-tight truncate">
+        <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 truncate">
           Planner Mode
         </p>
         <p className="text-[8px] text-neutral-600 uppercase tracking-widest">

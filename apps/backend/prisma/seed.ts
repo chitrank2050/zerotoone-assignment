@@ -5,6 +5,7 @@ import { parse } from 'csv-parse/sync';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
+import * as bcrypt from 'bcryptjs';
 // We use string literals for Roles to avoid Prisma 7 ghost-import issues in monorepos.
 
 // --- Types & Interfaces ---
@@ -67,6 +68,8 @@ async function seedUsers() {
     return;
   }
   console.log('👤 Seeding Users...');
+  const hashedPassword = await bcrypt.hash('password123', 10);
+
   return Promise.all([
     prisma.user.upsert({
       where: { email: 'admin@example.com' },
@@ -74,7 +77,7 @@ async function seedUsers() {
       create: {
         id: 'admin-user-id',
         email: 'admin@example.com',
-        password: 'password123',
+        password: hashedPassword,
         role: 'ADMIN' as any,
       },
     }),
@@ -83,7 +86,7 @@ async function seedUsers() {
       update: {},
       create: {
         email: 'planner@example.com',
-        password: 'password123',
+        password: hashedPassword,
         role: 'PLANNER' as any,
       },
     }),

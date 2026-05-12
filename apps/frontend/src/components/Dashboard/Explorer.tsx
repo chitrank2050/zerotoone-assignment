@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useChatContext } from '../../context/ChatContextCore';
-import SignalCard from '../SignalCard';
+import { SignalCard } from '../SignalCard';
 
 export const Explorer: React.FC = () => {
   const { state, actions } = useChatContext();
@@ -9,8 +9,8 @@ export const Explorer: React.FC = () => {
   const totalReach = signals.reduce((acc, s) => acc + (s.reach || 0), 0);
 
   return (
-    <aside className="w-80 border-l border-border-subtle bg-neutral-950 hidden xl:flex flex-col z-20 animate-fade-in text-neutral-100">
-      <div className="p-8 border-b border-border-subtle">
+    <aside className="w-80 border-l border-white/20 bg-neutral-950 hidden xl:flex flex-col z-20 animate-fade-in text-neutral-100">
+      <div className="p-8 border-b border-white/20">
         <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-2">
           Targeting Signals
         </h3>
@@ -18,9 +18,9 @@ export const Explorer: React.FC = () => {
 
       <div className="flex-1 p-8 space-y-8 overflow-y-auto">
         {signals.length === 0 ? (
-          <div className="py-12 text-center opacity-30">
+          <div className="py-12 text-center opacity-20">
             <p className="text-[10px] font-bold uppercase tracking-widest">
-              Null Set
+              Audience Empty
             </p>
           </div>
         ) : (
@@ -30,7 +30,7 @@ export const Explorer: React.FC = () => {
         )}
       </div>
 
-      <div className="p-8 border-t border-border-subtle">
+      <div className="p-8 border-t border-white/20">
         <div className="flex justify-between items-baseline mb-8">
           <div>
             <p className="text-meta mb-1">Total Reach</p>
