@@ -2,8 +2,10 @@ import 'dotenv/config';
 import * as fs from 'fs';
 import * as path from 'path';
 import { parse } from 'csv-parse/sync';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
+// We use string literals for Roles to avoid Prisma 7 ghost-import issues in monorepos.
 
 // --- Types & Interfaces ---
 
@@ -37,10 +39,10 @@ interface TransRecord {
 
 // --- Initialization ---
 
-const adapter = new PrismaLibSql({
-  url: process.env.DATABASE_URL as string,
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL as string,
 });
-
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 /**
@@ -66,7 +68,7 @@ async function seedUsers() {
         id: 'admin-user-id',
         email: 'admin@example.com',
         password: 'password123',
-        role: 'admin',
+        role: 'ADMIN' as any,
       },
     }),
     prisma.user.upsert({
@@ -75,7 +77,7 @@ async function seedUsers() {
       create: {
         email: 'planner@example.com',
         password: 'password123',
-        role: 'planner',
+        role: 'PLANNER' as any,
       },
     }),
   ]);

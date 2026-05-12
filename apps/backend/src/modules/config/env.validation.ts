@@ -35,6 +35,10 @@ export class EnvConfig {
   @IsString()
   @IsOptional()
   ALLOWED_ORIGINS?: string;
+
+  @IsString()
+  @IsOptional()
+  REDIS_URL?: string;
 }
 
 export function validate(config: Record<string, unknown>) {

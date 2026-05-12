@@ -20,6 +20,7 @@ import { ConfigModule } from '@modules/config/config.module';
 import { HealthModule } from '@modules/health';
 import { PrismaModule } from '@modules/prisma/prisma.module';
 import { TaxonomyModule } from '@modules/taxonomy/taxonomy.module';
+import { CacheCustomModule } from '@modules/cache/cache.module';
 
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -33,6 +34,7 @@ import { RequestLoggerMiddleware } from './common/middleware/request-logger.midd
     ConfigModule,
     PrismaModule,
     HealthModule,
+    CacheCustomModule,
 
     // Domain Modules
     AuthModule,

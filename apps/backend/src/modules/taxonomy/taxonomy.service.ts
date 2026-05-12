@@ -11,13 +11,18 @@
  *
  * Performance: Utilizes LibSQL 'contains' queries for performant path-based search.
  */
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
+import type { Cache } from 'cache-manager';
 
 import { PrismaService } from '@modules/prisma/prisma.service';
 
 @Injectable()
 export class TaxonomyService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   /**
    * Performs a fuzzy search across the geographical signal catalog.
@@ -45,13 +50,25 @@ export class TaxonomyService {
    * Retrieves the full location hierarchy for AI context injection.
    */
   async getAllLocations() {
-    return this.prisma.locationTaxonomy.findMany();
+    const cacheKey = 'taxonomy:locations';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached as any;
+
+    const locations = await this.prisma.locationTaxonomy.findMany();
+    await this.cacheManager.set(cacheKey, locations, 3600000); // 1 hour
+    return locations;
   }
 
   /**
    * Retrieves the full transaction hierarchy for AI context injection.
    */
   async getAllTransactions() {
-    return this.prisma.transactionTaxonomy.findMany();
+    const cacheKey = 'taxonomy:transactions';
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) return cached as any;
+
+    const transactions = await this.prisma.transactionTaxonomy.findMany();
+    await this.cacheManager.set(cacheKey, transactions, 3600000); // 1 hour
+    return transactions;
   }
 }

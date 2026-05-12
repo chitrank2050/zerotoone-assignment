@@ -34,11 +34,7 @@ import {
 
 import { PrismaService } from '@modules/prisma/prisma.service';
 
-import type {
-  LocationTaxonomy,
-  Message,
-  TransactionTaxonomy,
-} from '@prisma/client';
+import type { Message } from '@prisma/client';
 
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 
@@ -130,27 +126,32 @@ export class ChatService {
       throw error;
     }
 
-    const [locations, transactions] = await Promise.all([
-      this.taxonomyService.getAllLocations(),
-      this.taxonomyService.getAllTransactions(),
+    // --- RAG: Dynamic Context Grounding ---
+    // Instead of sending 5000+ signals, we perform a lightweight fuzzy match
+    // to find the most relevant branches for the user's current request.
+    const [relevantLocations, relevantTransactions] = await Promise.all([
+      this.taxonomyService.searchLocations(text),
+      this.taxonomyService.searchTransactions(text),
     ]);
 
     const systemPrompt = `
-      You are an AI Audience Builder assistant for an advertising platform.
-      Your goal is to translate natural language descriptions of audiences into structured targeting signals.
+        You are an AI Audience Builder assistant for an advertising platform.
+        Your goal is to translate natural language descriptions of audiences into structured targeting signals.
 
-      Available Location Taxonomy:
-      ${JSON.stringify(locations.map((l: LocationTaxonomy) => ({ id: l.externalId, path: l.path })))}
+        I have retrieved the most relevant signals based on the user's query:
 
-      Available Transaction Taxonomy:
-      ${JSON.stringify(transactions.map((t: TransactionTaxonomy) => ({ id: t.externalId, path: t.path })))}
+        Relevant Location Signals:
+        ${JSON.stringify(relevantLocations.slice(0, 50).map((l) => ({ id: l.externalId, path: l.path })))}
 
-      Goal:
-      - Interpret the user's audience description.
-      - Recommend the most relevant signals from the taxonomies above.
-      - If the user provides demographic info (age, gender, income), map it to consumer group (CG) fields.
-      - Once signals are approved, provide a "Reachable Audience Size" estimate.
-    `;
+        Relevant Transaction Signals:
+        ${JSON.stringify(relevantTransactions.slice(0, 50).map((t) => ({ id: t.externalId, path: t.path })))}
+
+        Instructions:
+        - Interpret the user's intent and map it to the retrieved signals.
+        - If the provided signals are insufficient, ask the user for more specifics.
+        - Map demographics (age, gender, income) to standard consumer groups.
+        - Provide a "Reachable Audience Size" estimate once signals are finalized.
+      `;
 
     const history = await this.prisma.message.findMany({
       where: { conversationId },
