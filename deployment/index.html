@@ -12,9 +12,13 @@
         <meta name="author" content="Chitrank Agnihotri">
       
       
-        <link rel="canonical" href="https://your-username.github.io/audience-builder/deployment/">
+        <link rel="canonical" href="https://chitrank2050.github.io/audience-builder/deployment/">
       
       
+        <link rel="prev" href="../development/">
+      
+      
+        <link rel="next" href="../api/overview/">
       
       
         
@@ -25,7 +29,7 @@
     
     
       
-        <title>🚀 Deployment Guide - AI Audience Builder</title>
+        <title>🚀 Deployment - AI Audience Builder</title>
       
     
     
@@ -112,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              🚀 Deployment Guide
+              🚀 Deployment
             
           </span>
         </div>
@@ -286,6 +290,27 @@
     
   
   🛠️ Development
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  🚀 Deployment
 
       </a>
     </li>
@@ -494,6 +519,191 @@
       
   
   
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🚀 Deployment
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    🚀 Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-summary-for-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ Architecture Summary for Deployment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#backend-deployment-render" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🛠️ Backend Deployment (Render)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🛠️ Backend Deployment (Render)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-new-web-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. New Web Service
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-backend-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Backend Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#frontend-deployment-vercel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ⚡ Frontend Deployment (Vercel)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="⚡ Frontend Deployment (Vercel)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-new-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. New Project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-frontend-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Frontend Environment Variables
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#database-initialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🗄️ Database Initialization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-deployment-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔍 Post-Deployment Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
   
   
     
@@ -512,10 +722,10 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
   
@@ -533,8 +743,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             
   
