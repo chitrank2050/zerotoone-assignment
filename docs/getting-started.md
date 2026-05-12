@@ -6,8 +6,8 @@ This guide will help you get your local development environment set up and runni
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js**: v20 or higher (LTS recommended)
-- **pnpm**: v9 or higher
+- **Node.js**: v24 or higher (LTS recommended)
+- **pnpm**: v10 or higher
 - **Git**: For version control
 - **Docker**: Optional (required for "Production Mirror" mode)
 
@@ -18,7 +18,7 @@ Before you begin, ensure you have the following installed:
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/your-repo/audience-builder.git
+   git clone https://github.com/chitrank2050/zerotoone-assignment.git
    cd audience-builder
    ```
 
@@ -46,7 +46,7 @@ You must configure the environment variables for the backend to function correct
    ```env
    DATABASE_URL="postgresql://user:password@neon-host.neon.tech/audience_builder?sslmode=require"
    JWT_SECRET="your-high-entropy-secret"
-   GROQ_API_KEY="your-google-ai-api-key"
+   GROQ_API_KEY="your-groq-console-api-key"
    PORT=3000
    ```
 

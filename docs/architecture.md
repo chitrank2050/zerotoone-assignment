@@ -45,14 +45,8 @@ The project is organized as a **Turborepo** monorepo:
 
 - **Framework**: [React 19](https://react.dev/)
 - **Build Tool**: [Vite](https://vitejs.dev/)
+- **Routing**: [React Router v7](https://reactrouter.com/)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **State Management**: React Context + URL State.
-- **Icons**: [Lucide React](https://lucide.dev/)
-
-### Shared (`packages/shared`)
-
-- **Language**: TypeScript
-- **Purpose**: Unified source of truth for all cross-boundary contracts.
 
 ---
 
@@ -60,11 +54,16 @@ The project is organized as a **Turborepo** monorepo:
 
 ### 1. Identity & Auth (`auth`)
 
-Handles JWT-based authentication, user roles (Admin, Planner), and secure session management.
+Handles JWT-based authentication with Case-Insensitive Role-Based Access Control (RBAC) supporting `ADMIN` and `PLANNER` tiers.
 
 ### 2. Chat & AI Strategy (`chat`)
 
-The core interface for audience generation. It leverages Gemini AI to translate natural language prompts into structured audience segments.
+The core orchestration engine. It leverages Groq's high-performance inference to translate natural language prompts into a dual-part response:
+
+1. **Conversational Reasoning**: Natural language explanation of the targeting strategy.
+2. **Structured Signals**: A hidden JSON block containing validated taxonomy signals, reach estimates, and total audience counts.
+
+This module utilizes Server-Sent Events (SSE) for real-time streaming to the frontend.
 
 ### 3. Taxonomy Engine (`taxonomy`)
 
