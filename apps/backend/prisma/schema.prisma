@@ -3,6 +3,8 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -41,23 +43,43 @@ model Message {
 }
 
 model LocationTaxonomy {
-  id       String  @id @default(uuid())
-  externalId String @unique
-  name     String
-  path     String
-  parentId String?
-  parent   LocationTaxonomy? @relation("Hierarchy", fields: [parentId], references: [id])
-  children LocationTaxonomy[] @relation("Hierarchy")
+  id         String   @id @default(uuid())
+  externalId String   @unique
+  name       String
+  path       String
+  parentId   String?
+  parent     LocationTaxonomy?  @relation("Hierarchy", fields: [parentId], references: [id])
+  children   LocationTaxonomy[] @relation("Hierarchy")
 }
 
 model TransactionTaxonomy {
-  id       String  @id @default(uuid())
-  externalId String @unique
-  name     String
-  path     String
-  parentId String?
-  parent   TransactionTaxonomy? @relation("Hierarchy", fields: [parentId], references: [id])
-  children TransactionTaxonomy[] @relation("Hierarchy")
+  id         String   @id @default(uuid())
+  externalId String   @unique
+  name       String
+  path       String
+  parentId   String?
+  parent     TransactionTaxonomy?  @relation("Hierarchy", fields: [parentId], references: [id])
+  children   TransactionTaxonomy[] @relation("Hierarchy")
+}
+
+model DataDictionary {
+  id               String  @id @default(uuid())
+  fieldName        String  @unique
+  fieldDescription String
+  fieldType        String
+  attributes       String?
+  fieldValues      String?
+  minRange         Float?
+  maxRange         Float?
+}
+
+model FieldValue {
+  id               String @id @default(uuid())
+  fieldName        String
+  value            String
+  description      String
+  
+  @@unique([fieldName, value])
 }
 
 model AudienceSegment {

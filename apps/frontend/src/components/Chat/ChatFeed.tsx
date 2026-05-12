@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { useChatContext } from '../../context/ChatContextCore';
 
 export const ChatFeed: React.FC = () => {
