@@ -92,10 +92,10 @@ Before starting the system, ensure you have a `.env` file in `apps/backend/` wit
 | Variable       | Description                | Example                          |
 | :------------- | :------------------------- | :------------------------------- |
 | `DATABASE_URL` | Neon PostgreSQL URI        | `postgresql://user:pass@host/db` |
-| `REDIS_URL`    | Upstash Redis URI          | `redis://localhost:6379`         |
-| `JWT_SECRET`   | Secret key for auth tokens | `your-high-entropy-secret`       |
-| `GROQ_API_KEY` | Google AI API Key          | `AIzaSy...`                      |
-| `PORT`         | Backend service port       | `3000`                           |
+| `JWT_SECRET`      | Secret key for auth tokens | `your-high-entropy-secret`                        |
+| `GROQ_API_KEY`    | Groq Console API Key       | `gsk_...`                                         |
+| `ALLOWED_ORIGINS` | CORS Allowed Origins       | `https://zerotoone-assignment-frontend.vercel.app` |
+| `PORT`            | Backend service port       | `3000`                                            |
 
 ---
 

@@ -29,13 +29,14 @@ Connect your GitHub repository and select the following settings:
 
 Add the following variables in the Render dashboard:
 
-| Variable       | Description                                                 |
-| :------------- | :---------------------------------------------------------- |
-| `DATABASE_URL` | Your PostgreSQL connection string (Neon.tech)               |
-| `JWT_SECRET`   | A secure random string for signing tokens                   |
-| `GROQ_API_KEY` | Your API key from [Groq Console](https://console.groq.com/) |
-| `NODE_ENV`     | `production`                                                |
-| `PORT`         | `3000` (Render usually sets this automatically)             |
+| Variable          | Description                                                 |
+| :---------------- | :---------------------------------------------------------- |
+| `DATABASE_URL`    | Your PostgreSQL connection string (Neon.tech)               |
+| `JWT_SECRET`      | A secure random string for signing tokens                   |
+| `GROQ_API_KEY`    | Your API key from [Groq Console](https://console.groq.com/) |
+| `ALLOWED_ORIGINS` | `https://zerotoone-assignment-frontend.vercel.app`          |
+| `NODE_ENV`        | `production`                                                |
+| `PORT`            | `3000` (Render usually sets this automatically)             |
 
 ---
 
