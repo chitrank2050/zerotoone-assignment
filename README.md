@@ -89,13 +89,13 @@ Built for production-grade troubleshooting:
 
 Before starting the system, ensure you have a `.env` file in `apps/backend/` with the following configuration:
 
-| Variable       | Description                | Example                          |
-| :------------- | :------------------------- | :------------------------------- |
-| `DATABASE_URL` | Neon PostgreSQL URI        | `postgresql://user:pass@host/db` |
-| `JWT_SECRET`      | Secret key for auth tokens | `your-high-entropy-secret`                        |
-| `GROQ_API_KEY`    | Groq Console API Key       | `gsk_...`                                         |
+| Variable          | Description                | Example                                            |
+| :---------------- | :------------------------- | :------------------------------------------------- |
+| `DATABASE_URL`    | Neon PostgreSQL URI        | `postgresql://user:pass@host/db`                   |
+| `JWT_SECRET`      | Secret key for auth tokens | `your-high-entropy-secret`                         |
+| `GROQ_API_KEY`    | Groq Console API Key       | `gsk_...`                                          |
 | `ALLOWED_ORIGINS` | CORS Allowed Origins       | `https://zerotoone-assignment-frontend.vercel.app` |
-| `PORT`            | Backend service port       | `3000`                                            |
+| `PORT`            | Backend service port       | `3000`                                             |
 
 ---
 
