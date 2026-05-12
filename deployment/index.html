@@ -1104,13 +1104,17 @@
 </ul>
 <hr />
 <h2 id="backend-deployment-render">🛠️ Backend Deployment (Render)<a class="headerlink" href="#backend-deployment-render" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>[!WARNING]
+<strong>Free Tier Cold Starts</strong>: Deploying to Render's Free Instance type means the service will spin down after 15 minutes of inactivity. The first request after a spin-down will experience a <strong>30-50 second delay</strong> (Cold Start). For production workloads requiring instant response times, upgrade to a "Starter" instance.</p>
+</blockquote>
 <h3 id="1-new-web-service">1. New Web Service<a class="headerlink" href="#1-new-web-service" title="Permanent link">&para;</a></h3>
 <p>Connect your GitHub repository and select the following settings:</p>
 <ul>
-<li><strong>Root Directory</strong>: <code>apps/backend</code> (or leave empty and use filter commands)</li>
+<li><strong>Root Directory</strong>: <code>(leave as project root)</code></li>
 <li><strong>Environment</strong>: <code>Node</code></li>
-<li><strong>Build Command</strong>: <code>pnpm install --no-frozen-lockfile &amp;&amp; pnpm run db:generate &amp;&amp; pnpm run build</code></li>
-<li><strong>Start Command</strong>: <code>pnpm run start:prod</code></li>
+<li><strong>Build Command</strong>: <code>pnpm install &amp;&amp; pnpm run build --filter=@audience-builder/backend...</code></li>
+<li><strong>Start Command</strong>: <code>pnpm --filter=@audience-builder/backend run start:prod</code></li>
 </ul>
 <h3 id="2-backend-environment-variables">2. Backend Environment Variables<a class="headerlink" href="#2-backend-environment-variables" title="Permanent link">&para;</a></h3>
 <p>Add the following variables in the Render dashboard:</p>
@@ -1150,9 +1154,9 @@
 <p>Connect your GitHub repository and select the following settings:</p>
 <ul>
 <li><strong>Framework Preset</strong>: <code>Vite</code></li>
-<li><strong>Root Directory</strong>: <code>apps/frontend</code></li>
-<li><strong>Build Command</strong>: <code>pnpm install --no-frozen-lockfile &amp;&amp; pnpm run build</code></li>
-<li><strong>Output Directory</strong>: <code>dist</code></li>
+<li><strong>Root Directory</strong>: <code>(leave as project root)</code></li>
+<li><strong>Build Command</strong>: <code>pnpm run build --filter=@audience-builder/frontend...</code></li>
+<li><strong>Output Directory</strong>: <code>apps/frontend/dist</code></li>
 </ul>
 <h3 id="2-frontend-environment-variables">2. Frontend Environment Variables<a class="headerlink" href="#2-frontend-environment-variables" title="Permanent link">&para;</a></h3>
 <p>Add the following variable:</p>
@@ -1166,7 +1170,7 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>VITE_API_URL</code></td>
-<td style="text-align: left;">The URL of your <strong>Render backend</strong> (e.g., <code>https://audience-backend.onrender.com/api/v1</code>)</td>
+<td style="text-align: left;"><code>https://zerotoone-assignment.onrender.com/api/v1</code></td>
 </tr>
 </tbody>
 </table>
