@@ -25,33 +25,33 @@ export const NavItem: React.FC<{
 );
 
 export const Sidebar: React.FC = () => (
-  <aside className="w-20 lg:w-56 border-r border-border-subtle bg-neutral-950 flex flex-col p-6 z-20 animate-fade-in text-neutral-100">
+  <aside className="w-20 lg:w-56 border-r border-neutral-900 bg-neutral-950 flex flex-col p-6 z-20 animate-fade-in text-neutral-100">
     <div className="flex items-center gap-3 mb-16">
-      <div className="w-8 h-8 border border-neutral-100 flex items-center justify-center">
+      <div className="w-8 h-8 border border-neutral-800 flex items-center justify-center rounded-sm">
         <Target className="text-neutral-100 w-4 h-4" aria-hidden="true" />
       </div>
       <span className="font-bold text-xs hidden lg:block tracking-widest uppercase">
-        Core
+        Audience
       </span>
     </div>
 
     <nav className="flex-1 space-y-6">
       <NavItem
         icon={<MessageSquare className="w-4 h-4" />}
-        label="Intelligence"
+        label="Chats"
         active
       />
-      <NavItem icon={<BarChart3 className="w-4 h-4" />} label="Analysis" />
-      <NavItem icon={<Settings className="w-4 h-4" />} label="Config" />
+      <NavItem icon={<BarChart3 className="w-4 h-4" />} label="Taxonomy" />
+      <NavItem icon={<Settings className="w-4 h-4" />} label="Settings" />
     </nav>
 
-    <div className="mt-auto pt-6 border-t border-border-subtle">
+    <div className="mt-auto pt-6 border-t border-neutral-900">
       <div className="flex flex-col gap-1 px-2 py-2 group cursor-default">
-        <p className="text-[10px] font-bold uppercase tracking-tighter truncate">
-          Planner:01
+        <p className="text-[10px] font-bold uppercase tracking-tight truncate">
+          Planner Mode
         </p>
-        <p className="text-[8px] text-neutral-600 uppercase tracking-[0.2em]">
-          Auth: Verified
+        <p className="text-[8px] text-neutral-600 uppercase tracking-widest">
+          v1.5.0
         </p>
       </div>
     </div>
