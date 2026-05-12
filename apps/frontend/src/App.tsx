@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import * as Chat from './components/Chat';
 import * as Dashboard from './components/Dashboard';
@@ -30,16 +31,26 @@ const PublicOnlyRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const DashboardLayout = () => {
+  const location = useLocation();
+  const isTaxonomy = location.pathname === '/taxonomy';
+
   return (
     <ChatProvider>
       <div className="flex h-screen overflow-hidden bg-neutral-950 text-neutral-100">
         <Dashboard.Sidebar />
-        <Dashboard.Main>
-          <Chat.Header />
-          <Chat.Feed />
-          <Chat.Input />
-        </Dashboard.Main>
-        <Dashboard.Explorer />
+
+        {isTaxonomy ? (
+          <Dashboard.TaxonomyPage />
+        ) : (
+          <>
+            <Dashboard.Main>
+              <Chat.Header />
+              <Chat.Feed />
+              <Chat.Input />
+            </Dashboard.Main>
+            <Dashboard.Explorer />
+          </>
+        )}
       </div>
     </ChatProvider>
   );

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 import { BarChart3, MessageSquare, Settings, Target } from 'lucide-react';
 
@@ -28,6 +29,7 @@ export const NavItem: React.FC<{
 
 export const Sidebar: React.FC = () => {
   const { logout } = useAuth();
+  const location = useLocation();
 
   return (
     <aside className="w-20 lg:w-56 border-r border-white/20 bg-neutral-950 flex flex-col p-8 z-20 animate-fade-in text-neutral-100">
@@ -41,12 +43,20 @@ export const Sidebar: React.FC = () => {
       </div>
 
       <nav className="flex-1 space-y-6">
-        <NavItem
-          icon={<MessageSquare className="w-4 h-4" />}
-          label="Chats"
-          active
-        />
-        <NavItem icon={<BarChart3 className="w-4 h-4" />} label="Taxonomy" />
+        <Link to="/">
+          <NavItem
+            icon={<MessageSquare className="w-4 h-4" />}
+            label="Chats"
+            active={location.pathname === '/'}
+          />
+        </Link>
+        <Link to="/taxonomy">
+          <NavItem
+            icon={<BarChart3 className="w-4 h-4" />}
+            label="Taxonomy"
+            active={location.pathname === '/taxonomy'}
+          />
+        </Link>
         <NavItem icon={<Settings className="w-4 h-4" />} label="Settings" />
       </nav>
 

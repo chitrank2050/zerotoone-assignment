@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useChatContext } from '../../context/ChatContextCore';
 import { SignalCard } from '../SignalCard';
@@ -6,6 +6,7 @@ import { SignalCard } from '../SignalCard';
 export const Explorer: React.FC = () => {
   const { state, actions } = useChatContext();
   const { signals, totalReach } = state;
+  const [isCommitted, setIsCommitted] = useState(false);
 
   return (
     <aside className="w-80 border-l border-white/20 bg-neutral-950 hidden xl:flex flex-col z-20 animate-fade-in text-neutral-100">
@@ -72,10 +73,18 @@ export const Explorer: React.FC = () => {
           )}
         </div>
         <button
-          disabled={signals.length === 0}
-          className="w-full py-3 border border-neutral-100 text-neutral-100 text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-neutral-100 hover:text-neutral-950 transition-colors active:scale-[0.98] disabled:opacity-20 disabled:cursor-not-allowed"
+          disabled={signals.length === 0 || isCommitted}
+          onClick={() => {
+            setIsCommitted(true);
+            setTimeout(() => setIsCommitted(false), 3000);
+          }}
+          className={`w-full py-3 border text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 active:scale-[0.98] disabled:opacity-20 disabled:cursor-not-allowed ${
+            isCommitted
+              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+              : 'border-neutral-100 text-neutral-100 hover:bg-neutral-100 hover:text-neutral-950'
+          }`}
         >
-          Commit Parameters
+          {isCommitted ? 'Parameters Committed ✓' : 'Commit Parameters'}
         </button>
       </div>
     </aside>

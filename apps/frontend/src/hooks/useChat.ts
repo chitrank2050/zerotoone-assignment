@@ -1,22 +1,73 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import type { Message, Signal } from '@audience-builder/shared';
 
 import apiClient from '../api/client';
 
-/**
- * Principal-Grade Chat Hook
- *
- * Orchestrates the complex state of an AI conversation,
- * including optimistic updates and signal synchronization.
- */
 export const useChat = (conversationId?: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [signals, setSignals] = useState<Signal[]>([]);
   const [totalReach, setTotalReach] = useState<number>(0);
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeId, setActiveId] = useState<string | undefined>(conversationId);
+
+  // Initialize from props, then fallback to sessionStorage
+  const [activeId, setActiveId] = useState<string | undefined>(
+    conversationId || sessionStorage.getItem('activeChatId') || undefined,
+  );
+
+  // Update sessionStorage whenever activeId changes
+  useEffect(() => {
+    if (activeId) {
+      sessionStorage.setItem('activeChatId', activeId);
+    }
+  }, [activeId]);
+
+  // Rehydrate chat history on mount if we have an activeId
+  useEffect(() => {
+    if (!activeId) return;
+
+    const hydrateChat = async () => {
+      try {
+        const response = await apiClient.get<Message[]>(
+          `/chat/conversations/${activeId}/messages`,
+        );
+        const history = response.data;
+
+        // Strip JSON blocks for UI display
+        const displayMessages = history.map((msg) => ({
+          ...msg,
+          content:
+            msg.role === 'agent'
+              ? msg.content.replace(/```json[\s\S]*?(```|$)/g, '').trim()
+              : msg.content,
+        }));
+        setMessages(displayMessages);
+
+        // Extract signals from the LAST agent message to restore Explorer state
+        const lastAgentMsg = [...history]
+          .reverse()
+          .find((m) => m.role === 'agent');
+        if (lastAgentMsg) {
+          const match = lastAgentMsg.content.match(
+            /```json\s*([\s\S]*?)\s*```/,
+          );
+          if (match?.[1]) {
+            const parsed = JSON.parse(match[1]);
+            if (parsed.signals) setSignals(parsed.signals);
+            if (parsed.totalReach) setTotalReach(parsed.totalReach);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to hydrate chat:', err);
+        // If the chat doesn't exist anymore, clear it
+        sessionStorage.removeItem('activeChatId');
+        setActiveId(undefined);
+      }
+    };
+
+    hydrateChat();
+  }, [activeId]);
 
   const sendMessage = useCallback(
     async (content: string) => {
