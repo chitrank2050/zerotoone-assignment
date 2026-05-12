@@ -13,14 +13,17 @@ This guide provides instructions for deploying the **AI Audience Builder** platf
 
 ## 🛠️ Backend Deployment (Render)
 
+> [!WARNING]
+> **Free Tier Cold Starts**: Deploying to Render's Free Instance type means the service will spin down after 15 minutes of inactivity. The first request after a spin-down will experience a **30-50 second delay** (Cold Start). For production workloads requiring instant response times, upgrade to a "Starter" instance.
+
 ### 1. New Web Service
 
 Connect your GitHub repository and select the following settings:
 
-- **Root Directory**: `apps/backend` (or leave empty and use filter commands)
+- **Root Directory**: `(leave as project root)`
 - **Environment**: `Node`
-- **Build Command**: `pnpm install --no-frozen-lockfile && pnpm run db:generate && pnpm run build`
-- **Start Command**: `pnpm run start:prod`
+- **Build Command**: `pnpm install && pnpm run build --filter=@audience-builder/backend...`
+- **Start Command**: `pnpm --filter=@audience-builder/backend run start:prod`
 
 ### 2. Backend Environment Variables
 
@@ -43,17 +46,17 @@ Add the following variables in the Render dashboard:
 Connect your GitHub repository and select the following settings:
 
 - **Framework Preset**: `Vite`
-- **Root Directory**: `apps/frontend`
-- **Build Command**: `pnpm install --no-frozen-lockfile && pnpm run build`
-- **Output Directory**: `dist`
+- **Root Directory**: `(leave as project root)`
+- **Build Command**: `pnpm run build --filter=@audience-builder/frontend...`
+- **Output Directory**: `apps/frontend/dist`
 
 ### 2. Frontend Environment Variables
 
 Add the following variable:
 
-| Variable       | Value                                                                                     |
-| :------------- | :---------------------------------------------------------------------------------------- |
-| `VITE_API_URL` | The URL of your **Render backend** (e.g., `https://audience-backend.onrender.com/api/v1`) |
+| Variable       | Value                                              |
+| :------------- | :------------------------------------------------- |
+| `VITE_API_URL` | `https://zerotoone-assignment.onrender.com/api/v1` |
 
 ---
 

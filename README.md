@@ -24,6 +24,24 @@ For detailed guides and API references, please see the [docs/](./docs) directory
 
 ---
 
+## 🌍 Live Deployment
+
+```text
+┌────────────────────────────────────────────────────────────────────────────┐
+│  AI Audience Builder Production Engine                                     │
+│                                                                            │
+│  Dashboard: https://zerotoone-assignment-frontend.vercel.app              │
+│  API Root:  https://zerotoone-assignment.onrender.com/api/v1               │
+│  Docs:      https://zerotoone-assignment.onrender.com/api/v1/docs          │
+│  Health:    https://zerotoone-assignment.onrender.com/api/v1/health        │
+└────────────────────────────────────────────────────────────────────────────┘
+```
+
+> [!NOTE]
+> **Cold Start Alert**: The backend is hosted on the Render Free Tier. If the service has been inactive, the first request may take **30-50 seconds** to spin up. Please be patient during the initial load!
+
+---
+
 ## 🏛️ Architecture & Governance
 
 The **AI Audience Builder** is a high-rigor, spec-driven monorepo designed for maximum type safety and development velocity. It leverages a **Modular Monolith** backend and a reactive **React 19** frontend, synchronized via a unified contracts package.
