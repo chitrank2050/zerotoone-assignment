@@ -21,6 +21,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 
 import { ERRORS } from '@common/constants/error-messages';
+import { SYSTEM_PROMPTS } from '@common/constants/prompts';
 import {
   isForeignKeyError,
   isNotFoundError,
@@ -134,24 +135,18 @@ export class ChatService {
       this.taxonomyService.searchTransactions(text),
     ]);
 
-    const systemPrompt = `
-        You are an AI Audience Builder assistant for an advertising platform.
-        Your goal is to translate natural language descriptions of audiences into structured targeting signals.
-
-        I have retrieved the most relevant signals based on the user's query:
-
-        Relevant Location Signals:
-        ${JSON.stringify(relevantLocations.slice(0, 50).map((l) => ({ id: l.externalId, path: l.path })))}
-
-        Relevant Transaction Signals:
-        ${JSON.stringify(relevantTransactions.slice(0, 50).map((t) => ({ id: t.externalId, path: t.path })))}
-
-        Instructions:
-        - Interpret the user's intent and map it to the retrieved signals.
-        - If the provided signals are insufficient, ask the user for more specifics.
-        - Map demographics (age, gender, income) to standard consumer groups.
-        - Provide a "Reachable Audience Size" estimate once signals are finalized.
-      `;
+    const systemPrompt = SYSTEM_PROMPTS.AUDIENCE_BUILDER(
+      JSON.stringify(
+        relevantLocations
+          .slice(0, 50)
+          .map((l) => ({ id: l.externalId, path: l.path })),
+      ),
+      JSON.stringify(
+        relevantTransactions
+          .slice(0, 50)
+          .map((t) => ({ id: t.externalId, path: t.path })),
+      ),
+    );
 
     const history = await this.prisma.message.findMany({
       where: { conversationId },
@@ -167,7 +162,7 @@ export class ChatService {
       chatHistory.unshift({ role: 'user', parts: [{ text: systemPrompt }] });
       chatHistory.push({
         role: 'model',
-        parts: [{ text: 'Understood. I will help you build your audience.' }],
+        parts: [{ text: SYSTEM_PROMPTS.ACKNOWLEDGMENT }],
       });
     }
 

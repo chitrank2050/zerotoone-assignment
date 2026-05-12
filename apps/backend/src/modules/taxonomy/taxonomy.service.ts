@@ -14,7 +14,7 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
-
+import { CACHE_TTL } from '@common/constants/app';
 import { PrismaService } from '@modules/prisma/prisma.service';
 
 @Injectable()
@@ -55,7 +55,7 @@ export class TaxonomyService {
     if (cached) return cached as any;
 
     const locations = await this.prisma.locationTaxonomy.findMany();
-    await this.cacheManager.set(cacheKey, locations, 3600000); // 1 hour
+    await this.cacheManager.set(cacheKey, locations, CACHE_TTL);
     return locations;
   }
 
@@ -68,7 +68,7 @@ export class TaxonomyService {
     if (cached) return cached as any;
 
     const transactions = await this.prisma.transactionTaxonomy.findMany();
-    await this.cacheManager.set(cacheKey, transactions, 3600000); // 1 hour
+    await this.cacheManager.set(cacheKey, transactions, CACHE_TTL);
     return transactions;
   }
 }

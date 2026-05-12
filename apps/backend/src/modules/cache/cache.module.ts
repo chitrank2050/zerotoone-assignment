@@ -2,6 +2,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { redisStore } from 'cache-manager-redis-yet';
+import { CACHE_TTL } from '@common/constants/app';
 
 /**
  * CacheCustomModule - Centralized Caching Infrastructure
@@ -26,14 +27,14 @@ import { redisStore } from 'cache-manager-redis-yet';
           return {
             store: await redisStore({
               url: redisUrl,
-              ttl: 3600000, // Default 1 hour
+              ttl: CACHE_TTL,
             }),
           };
         }
 
         // Fallback for local development
         return {
-          ttl: 3600000,
+          ttl: CACHE_TTL,
         };
       },
     }),

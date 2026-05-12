@@ -106,13 +106,13 @@ async function bootstrap(): Promise<void> {
   await app.listen(port);
 
   console.log(`
-  ┌──────────────────────────────────────────────┐
-  │  AI Audience Builder API running             │
-  │  Local:   http://localhost:${String(port).padEnd(4)}              │
-  │  Docs:    http://localhost:${String(port).padEnd(4)}/api/docs     │
-  │  Health:  http://localhost:${String(port).padEnd(4)}/health       │
-  │  Mode:    ${String(ENV ?? 'development').padEnd(35)}│
-  └──────────────────────────────────────────────┘
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  AI Audience Builder API running                                     │
+  │  Local:   http://localhost:${String(port).padEnd(4)}                 │
+  │  Docs:    http://localhost:${String(port).padEnd(4)}/api/docs        │
+  │  Health:  http://localhost:${String(port).padEnd(4)}/health          │
+  │  Mode:    ${String(ENV ?? 'development').padEnd(35)}                 │
+  └──────────────────────────────────────────────────────────────────────┘
   `);
 }
 

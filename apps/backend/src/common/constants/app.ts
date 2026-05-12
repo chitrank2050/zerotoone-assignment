@@ -19,3 +19,6 @@ export const APP_NAME = 'AI Audience Builder';
 
 /** Header used to carry correlation ID across requests */
 export const CORRELATION_ID_HEADER = 'x-correlation-id';
+
+/** Default TTL for cached taxonomies (1 hour in ms) */
+export const CACHE_TTL = 3600000;
